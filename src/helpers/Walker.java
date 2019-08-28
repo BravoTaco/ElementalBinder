@@ -13,7 +13,7 @@ public class Walker {
     public static boolean closestBankContainsPlayer() {
         closestBank = banks[0];
         for (int i = 1; i < banks.length; i++) {
-            if (banks[i].getCentralPosition().distance(rune.getRuinsLocation().getCentralPosition()) < closestBank.getCentralPosition().distance(rune.getRuinsLocation().getCentralPosition())) {
+            if (banks[i].getCentralPosition().distance(script.myPosition()) < closestBank.getCentralPosition().distance(script.myPosition())) {
                 closestBank = banks[i];
             }
         }

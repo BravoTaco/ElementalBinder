@@ -15,7 +15,7 @@ import tasks.*;
 
 import java.awt.*;
 
-@ScriptManifest(name = "Elemental Binder", author = "BravoTaco", version = 1.0, info = "Runecrafts F2P Runes.", logo = "https://i.imgur.com/svwoFav.png")
+@ScriptManifest(name = "Elemental Binder", author = "BravoTaco", version = 1.01, info = "Runecrafts F2P Runes.", logo = "https://i.imgur.com/svwoFav.png")
 public class ElementalBinder extends Script {
 
     private final Filter<Item> essenceFilter = item -> item.getName().equals("Rune essence") || item.getName().equals("Pure essence");
