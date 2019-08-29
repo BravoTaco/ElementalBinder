@@ -23,6 +23,7 @@ public class Walker {
     public static boolean bankWalkEvent() {
         WalkingEvent walkingEvent = new WalkingEvent(closestBank);
         walkingEvent.setEnergyThreshold(10);
+        walkingEvent.setMinDistanceThreshold(5);
         script.log("Starting WalkingEvent: [BankWalkEvent]");
         script.execute(walkingEvent);
         if (walkingEvent.getStatus().equals(Event.EventStatus.FINISHED)) {

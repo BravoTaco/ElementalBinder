@@ -32,6 +32,7 @@ public class EnterRuins {
     }
 
     private boolean walkToAltar() {
+        status = "Walking To altar!";
         return script.getWalking().walk(altar);
     }
 
@@ -51,16 +52,10 @@ public class EnterRuins {
         if (script.getInventory().contains(talisman.getName())) {
             if (script.getInventory().interact("Use", talisman.getName())) {
                 if (ruins.interact("Use")) {
-                    new ConditionalSleep(5000, 100) {
-                        @Override
-                        public boolean condition() throws InterruptedException {
-                            return script.myPlayer().isMoving();
-                        }
-                    }.sleep();
                     new ConditionalSleep(15000, 100) {
                         @Override
                         public boolean condition() throws InterruptedException {
-                            return (script.getObjects().closest("Altar") != null) && altar.getConfig() == rune.getAltar().getConfig() || !script.myPlayer().isMoving();
+                            return (script.getObjects().closest("Altar") != null) && altar.getConfig() == rune.getAltar().getConfig();
                         }
                     }.sleep();
                     return true;
