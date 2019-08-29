@@ -177,7 +177,7 @@ public class ElementalBinder extends Script {
 
     private boolean mysteriousRuinsExists() {
         RS2Object ruins;
-        return ((ruins = getObjects().closest("Mysterious ruins")) != null) && ruins.isVisible() && ruins.getPosition().isOnMiniMap(this.bot);
+        return ((ruins = getObjects().closest("Mysterious ruins")) != null) && ruins.getPosition().isOnMiniMap(this.bot);
     }
 
     private boolean portalExists() {
