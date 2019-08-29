@@ -56,7 +56,7 @@ public class Walker {
         } else {
             script.log("Error With WalkingEvent: [" + walkingEvent.getStatus() + "]");
             script.log("Trying to use WebWalkingEvent instead!");
-            WebWalkEvent webWalkEvent = new WebWalkEvent(rune.getRuinsLocation());
+            WebWalkEvent webWalkEvent = new WebWalkEvent(rune.getRuinsLocation().getRandomPosition());
             webWalkEvent.setEnergyThreshold(10);
             script.execute(webWalkEvent);
             if(webWalkEvent.getStatus().equals(Event.EventStatus.FINISHED)){

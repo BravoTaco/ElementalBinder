@@ -41,7 +41,7 @@ public class UsePortal {
             new ConditionalSleep(15000, 100) {
                 @Override
                 public boolean condition() throws InterruptedException {
-                    return !portal.isVisible();
+                    return !portal.isVisible() || !portalExists();
                 }
             }.sleep();
             return true;
