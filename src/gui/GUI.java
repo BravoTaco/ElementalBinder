@@ -14,6 +14,7 @@ public class GUI {
     private JPanel startCancelPanel;
     private JButton cancelButton;
     private JButton startButton;
+    private JButton muleSettings;
     private JPanel infoSelectorPanel;
     private JLabel selectRuneLabel;
     private JComboBox<Runes> runeCB;
@@ -23,6 +24,12 @@ public class GUI {
 
     private Color defaultForeground = new Color(-10306630);
     private Color defaultBackground = new Color(-13553359);
+
+    public static void main(String args[]) {
+        GUI gui = new GUI();
+        gui.show();
+    }
+
 
     public GUI() {
         initializeMainDialog();
@@ -41,6 +48,11 @@ public class GUI {
     public void close(){
         mainDialog.setVisible(false);
         mainDialog.dispose();
+    }
+
+    private void openMuleSettingsGUI() {
+        MuleSettingsGUI muleSettingsGUI = new MuleSettingsGUI();
+        muleSettingsGUI.show();
     }
 
     public boolean exited(){
@@ -122,6 +134,15 @@ public class GUI {
     }
 
     private void initializeButtons() {
+        muleSettings = new JButton();
+        muleSettings.setBackground(defaultBackground);
+        muleSettings.setForeground(defaultForeground);
+        muleSettings.setHorizontalAlignment(0);
+        muleSettings.setHorizontalTextPosition(0);
+        muleSettings.setText("Mule Settings");
+        muleSettings.setVerticalAlignment(0);
+        muleSettings.setVerticalTextPosition(0);
+        startCancelPanel.add(muleSettings);
         cancelButton = new JButton();
         cancelButton.setBackground(defaultBackground);
         cancelButton.setForeground(defaultForeground);
@@ -143,6 +164,19 @@ public class GUI {
 
         cancelButton.addActionListener(e -> close());
         startButton.addActionListener(e -> start());
+        muleSettings.addActionListener(e -> openMuleSettingsGUI());
+
+        muleSettings.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                muleSettings.setForeground(Color.ORANGE);
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                muleSettings.setForeground(defaultForeground);
+            }
+        });
 
         startButton.addMouseListener(new MouseAdapter() {
             @Override

@@ -9,6 +9,8 @@ public class UseAltar {
     RS2Object altar;
     RS2Object portal;
 
+    private long runesInv;
+
     public UseAltar() throws InterruptedException {
         status = "Using altar!";
         if (altarExists()) {
@@ -37,7 +39,7 @@ public class UseAltar {
 
     private boolean addRunesCrafted(){
         if(script.getInventory().contains(rune.getName())){
-            amountOfRunesMade += script.getInventory().getAmount(rune.getName());
+            amountOfRunesMade += (script.getInventory().getAmount(rune.getName()) - runesInv);
             return true;
         }
         return false;
@@ -49,6 +51,7 @@ public class UseAltar {
 
     private boolean craftRunes() {
         if (altar.interact("Craft-rune")) {
+            runesInv = script.getInventory().getAmount(rune.getName());
             new ConditionalSleep(15000) {
                 @Override
                 public boolean condition() throws InterruptedException {

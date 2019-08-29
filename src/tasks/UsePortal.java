@@ -3,8 +3,7 @@ package tasks;
 import org.osbot.rs07.api.model.RS2Object;
 import org.osbot.rs07.utility.ConditionalSleep;
 
-import static data.GlobalVariables.script;
-import static data.GlobalVariables.status;
+import static data.GlobalVariables.*;
 
 public class UsePortal {
     RS2Object portal;
@@ -14,7 +13,9 @@ public class UsePortal {
         if (portalExists()) {
             if (usePortal()) {
                 script.log("Used Portal!");
-                new GetEssence();
+                if (!mulingEnabled) {
+                    new GetEssence();
+                }
             }
         } else if (portalIsNotVisible()){
             if(walkToPortal()){

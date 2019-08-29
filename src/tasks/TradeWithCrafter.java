@@ -1,0 +1,65 @@
+package tasks;
+
+import helpers.Trader;
+import org.osbot.rs07.api.filter.Filter;
+import org.osbot.rs07.api.model.Item;
+import org.osbot.rs07.api.model.Player;
+import org.osbot.rs07.utility.ConditionalSleep;
+
+import static data.GlobalVariables.*;
+
+public class TradeWithCrafter {
+    private Player crafter;
+    private Item essence = script.getInventory().getItem((Filter<Item>) item -> item.getName().equals("Rune essence") || item.getName().equals("Pure essence"));
+
+    public TradeWithCrafter() throws InterruptedException {
+        if (crafterExists()) {
+            status = "Trading with crafter!";
+            if (Trader.trade(crafter)) {
+                if (Trader.offerItem(essence, 27)) {
+                    if (Trader.acceptTrade(true)) {
+                        if (doesNotHaveEssence()) {
+                            new GetEssence();
+                        }
+                    }
+                }
+            }
+        } else {
+            if (waitForCrafter()) {
+                new TradeWithCrafter();
+            }
+        }
+    }
+
+    private boolean waitForCrafter() {
+        status = "Waiting for crafter!";
+        script.log(runecrafterName);
+        new ConditionalSleep(60000, 3000) {
+            @Override
+            public boolean condition() throws InterruptedException {
+                return crafterExists();
+            }
+        }.sleep();
+        if (crafterExists()) {
+            return true;
+        }
+        return false;
+    }
+
+    private boolean doesNotHaveEssence() {
+        return !script.getInventory().contains("Pure essence") && !script.getInventory().contains("Rune essence");
+    }
+
+    private boolean crafterExists() {
+        for (Player player : script.getPlayers().getAll()) {
+            if (player != null) {
+                if (player.getName().equals(runecrafterName)) {
+                    crafter = player;
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+}

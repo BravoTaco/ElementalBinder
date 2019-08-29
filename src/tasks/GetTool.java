@@ -17,11 +17,13 @@ public class GetTool {
                             if (getTool(tiara.getName())) {
                                 if (equipTiara()) {
                                     script.log("Equipped Tiara!");
+                                    new GetEssence();
                                 }
                             }
                         } else if (bankContainsTalisman()) {
                             if (getTool(talisman.getName())) {
                                 script.log("Got Talisman!");
+                                new GetEssence();
                             }
                         } else {
                             script.log("Bank does not have required talisman or tiara! Stopping script!");

@@ -59,6 +59,9 @@ public class GetEssence {
     }
 
     private boolean withdrawEssence(String name) {
+        if (isMule) {
+            return script.getBank().withdraw(name, 27);
+        }
         return script.getBank().withdrawAll(name);
     }
 

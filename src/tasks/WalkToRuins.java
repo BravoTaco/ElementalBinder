@@ -10,8 +10,9 @@ public class WalkToRuins {
         if (!ruinsLocationContainsPlayer()) {
             if (Walker.ruinsWalkEvent()) {
                 script.log("Walked To Ruins!");
-                new EnterRuins();
             }
+        } else {
+            new EnterRuins();
         }
     }
 

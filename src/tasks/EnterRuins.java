@@ -11,24 +11,36 @@ public class EnterRuins {
     private RS2Object altar;
 
     public EnterRuins() throws InterruptedException {
-        status = "Entering Ruins!";
-        if (ruinsExists()) {
-            if (enterRuins()) {
-                if(altarExists()){
-                    if(walkToAltar()){
-                        new UseAltar();
+        if (!isMule) {
+            status = "Entering Ruins!";
+            if (ruinsExists()) {
+                if (enterRuins()) {
+                    if (altarExists()) {
+                        if (walkToAltar()) {
+                            new UseAltar();
+                        }
                     }
                 }
+            } else {
+                if (walkToRuins()) {
+                    new EnterRuins();
+                }
             }
+        } else {
+            new TradeWithCrafter();
         }
     }
 
-    private boolean walkToAltar(){
+    private boolean walkToAltar() {
         return script.getWalking().walk(altar);
     }
 
-    private boolean altarExists(){
+    private boolean altarExists() {
         return ((altar = script.getObjects().closest("Altar")) != null);
+    }
+
+    private boolean walkToRuins() {
+        return script.getWalking().walk(ruins.getPosition());
     }
 
     private boolean ruinsExists() {

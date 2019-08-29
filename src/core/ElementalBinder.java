@@ -1,12 +1,12 @@
 package core;
 
-import data.GlobalVariables;
-import helpers.Paint;
 import enums.State;
 import github.VersionChecker;
 import gui.GUI;
+import helpers.Paint;
 import org.osbot.rs07.api.filter.Filter;
 import org.osbot.rs07.api.model.Item;
+import org.osbot.rs07.api.model.Player;
 import org.osbot.rs07.api.model.RS2Object;
 import org.osbot.rs07.api.ui.Skill;
 import org.osbot.rs07.script.Script;
@@ -14,6 +14,8 @@ import org.osbot.rs07.script.ScriptManifest;
 import tasks.*;
 
 import java.awt.*;
+
+import static data.GlobalVariables.*;
 
 @ScriptManifest(name = "Elemental Binder", author = "BravoTaco", version = 1.01, info = "Runecrafts F2P Runes.", logo = "https://i.imgur.com/svwoFav.png")
 public class ElementalBinder extends Script {
@@ -27,6 +29,8 @@ public class ElementalBinder extends Script {
     private Filter<Item> talismanFilter;
     private int startXp;
     private boolean started = false;
+    private Player mule;
+    private Player runecrafter;
 
     @Override
     public void onStart() {
@@ -44,7 +48,7 @@ public class ElementalBinder extends Script {
     @Override
     public int onLoop() throws InterruptedException {
         state = setState();
-        if (state != null) {
+        if (state != null && !isMule) {
             switch (state) {
                 case GETTOOL:
                     new GetTool();
@@ -64,6 +68,24 @@ public class ElementalBinder extends Script {
                 case USEPORTAL:
                     new UsePortal();
                     break;
+                case WAITFORMULE:
+                    new WaitForMule();
+                    break;
+                case TRADEWITHMULE:
+                    new TradeWithMule();
+                    break;
+            }
+        } else if (state != null) {
+            switch (state) {
+                case GETESSENCE:
+                    new GetEssence();
+                    break;
+                case WALKTORUINS:
+                    new WalkToRuins();
+                    break;
+                case TRADEWITHCRAFTER:
+                    new TradeWithCrafter();
+                    break;
             }
         }
 
@@ -81,15 +103,15 @@ public class ElementalBinder extends Script {
         long xpTillLevel = getSkills().getExperienceForLevel(getSkills().getStatic(Skill.RUNECRAFTING) + 1) - getSkills().getExperience(Skill.RUNECRAFTING);
 
         if (started) {
-            paint.drawData(g, 5, 340, runTime, timeTillLevel, xpPerHour, GlobalVariables.amountOfRunesMade, gainedXp, xpTillLevel);
+            paint.drawData(g, 5, 340, runTime, timeTillLevel, xpPerHour, amountOfRunesMade, gainedXp, xpTillLevel);
         }
 
     }
 
     private void initializeVariables(){
-        GlobalVariables.script = this;
+        script = this;
         gui = new GUI();
-        GlobalVariables.rcLevel = getSkills().getStatic(Skill.RUNECRAFTING);
+        rcLevel = getSkills().getStatic(Skill.RUNECRAFTING);
         getExperienceTracker().start(Skill.RUNECRAFTING);
         startXp = getSkills().getExperience(Skill.RUNECRAFTING);
         paint = new Paint(this);
@@ -106,9 +128,9 @@ public class ElementalBinder extends Script {
         if (gui.exited()) {
             stop(false);
         } else {
-            tiaraFilter = item -> item.getName().equals(GlobalVariables.tiara.getName());
-            talismanFilter = item -> item.getName().equals(GlobalVariables.talisman.getName());
-            if(GlobalVariables.rune.getLevelRequirement() > getSkills().getStatic(Skill.RUNECRAFTING)){
+            tiaraFilter = item -> item.getName().equals(tiara.getName());
+            talismanFilter = item -> item.getName().equals(talisman.getName());
+            if (rune.getLevelRequirement() > getSkills().getStatic(Skill.RUNECRAFTING) && !isMule) {
                 log("Level Requirement not met! Stopping script!");
                 stop(false);
             }
@@ -116,20 +138,44 @@ public class ElementalBinder extends Script {
     }
 
     private State setState() {
-        if (!hasTiaraOrTalisman()) {
-            return State.GETTOOL;
-        } else if (!hasEssence() && hasTiaraOrTalisman() && !portalExists() && !altarExists()) {
-            return State.GETESSENCE;
-        } else if (hasEssence() && !portalExists() && !altarExists() && !mysteriousRuinsExists()) {
-            return State.WALKTORUINS;
-        } else if (mysteriousRuinsExists() && hasEssence() && !portalExists() && !altarExists()) {
-            return State.ENTERRUINS;
-        } else if (altarExists() && hasEssence()) {
-            return State.USEALTAR;
-        } else if (portalExists() && !hasEssence()) {
-            return State.USEPORTAL;
+        if (!isMule) {
+            if (!hasTiaraOrTalisman()) {
+                return State.GETTOOL;
+            } else if (!hasEssence() && hasTiaraOrTalisman() && !portalExists() && !altarExists() && !mulingEnabled) {
+                return State.GETESSENCE;
+            } else if (hasEssence() && !portalExists() && !altarExists() && !mysteriousRuinsExists()) {
+                return State.WALKTORUINS;
+            } else if (mysteriousRuinsExists() && hasEssence() && !portalExists() && !altarExists()) {
+                return State.ENTERRUINS;
+            } else if (altarExists() && hasEssence()) {
+                return State.USEALTAR;
+            } else if (portalExists() && !hasEssence()) {
+                return State.USEPORTAL;
+            } else if (!hasEssence() && hasTiaraOrTalisman() && !portalExists() && !altarExists() && mulingEnabled && mysteriousRuinsExists() && !muleNearby()) {
+                return State.WAITFORMULE;
+            } else if (muleNearby() && !hasEssence() && hasTiaraOrTalisman() && mulingEnabled) {
+                return State.TRADEWITHMULE;
+            }
+        } else {
+            if (!hasEssence()) {
+                return State.GETESSENCE;
+            } else if (hasEssence() && !mysteriousRuinsExists()) {
+                return State.WALKTORUINS;
+            } else if (hasEssence() && mysteriousRuinsExists() && runecrafterNearby()) {
+                return State.TRADEWITHCRAFTER;
+            }
         }
         return null;
+    }
+
+    private boolean runecrafterNearby() {
+        for (Player player : getPlayers().getAll()) {
+            if (player.getName().equals(runecrafterName)) {
+                runecrafter = player;
+                return true;
+            }
+        }
+        return false;
     }
 
     private boolean mysteriousRuinsExists() {
@@ -139,12 +185,12 @@ public class ElementalBinder extends Script {
 
     private boolean portalExists() {
         RS2Object portal;
-        return ((portal = getObjects().closest("Portal")) != null && portal.getConfig() == GlobalVariables.rune.getPortal().getConfig());
+        return ((portal = getObjects().closest("Portal")) != null && portal.getConfig() == rune.getPortal().getConfig());
     }
 
     private boolean altarExists() {
         RS2Object altar;
-        return ((altar = getObjects().closest("Altar")) != null && altar.getConfig() == GlobalVariables.rune.getAltar().getConfig());
+        return ((altar = getObjects().closest("Altar")) != null && altar.getConfig() == rune.getAltar().getConfig());
     }
 
     private boolean hasTiaraOrTalisman() {
@@ -153,6 +199,16 @@ public class ElementalBinder extends Script {
 
     private boolean hasEssence() {
         return getInventory().contains(essenceFilter);
+    }
+
+    private boolean muleNearby() {
+        for (Player player : getPlayers().getAll()) {
+            if (muleNames.contains(player.getName())) {
+                mule = player;
+                return true;
+            }
+        }
+        return false;
     }
 
 }
