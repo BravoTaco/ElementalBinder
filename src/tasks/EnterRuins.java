@@ -36,7 +36,7 @@ public class EnterRuins {
     }
 
     private boolean altarExists() {
-        return ((altar = script.getObjects().closest("Altar")) != null);
+        return ((altar = script.getObjects().closest("Altar")) != null) && altar.getConfig() == rune.getAltar().getConfig();
     }
 
     private boolean walkToRuins() {
@@ -44,17 +44,23 @@ public class EnterRuins {
     }
 
     private boolean ruinsExists() {
-        return (((ruins = script.getObjects().closest("Mysterious ruins")) != null) && ruins.isVisible());
+        return (((ruins = script.getObjects().closest("Mysterious ruins")) != null) && ruins.getPosition().isOnMiniMap(script.getBot()));
     }
 
     private boolean enterRuins() {
         if (script.getInventory().contains(talisman.getName())) {
             if (script.getInventory().interact("Use", talisman.getName())) {
                 if (ruins.interact("Use")) {
+                    new ConditionalSleep(5000, 100) {
+                        @Override
+                        public boolean condition() throws InterruptedException {
+                            return script.myPlayer().isMoving();
+                        }
+                    }.sleep();
                     new ConditionalSleep(15000, 100) {
                         @Override
                         public boolean condition() throws InterruptedException {
-                            return !rune.getRuinsLocation().contains(script.myPlayer());
+                            return (script.getObjects().closest("Altar") != null) && altar.getConfig() == rune.getAltar().getConfig() || !script.myPlayer().isMoving();
                         }
                     }.sleep();
                     return true;

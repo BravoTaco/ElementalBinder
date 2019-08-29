@@ -16,8 +16,6 @@ public class Trader {
     private static RS2Widget acceptButton;
     private static RS2Widget acceptButtonSelected;
 
-    private static boolean clickedAccept = false;
-
     private static boolean inputXAmount(int amount) {
         new ConditionalSleep(10000, 100) {
             @Override
@@ -32,6 +30,37 @@ public class Trader {
         }
     }
 
+    private static boolean charIsANumber(char c) {
+        try {
+            Integer.parseInt("" + c);
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public static int availableInvSlots() {
+        RS2Widget freeSlotsWidget = script.getWidgets().get(335, 9);
+        String amountOfFreeSlots = "0";
+        StringBuilder sb = new StringBuilder();
+        if (freeSlotsWidget != null && freeSlotsWidget.isVisible()) {
+            for (char c : freeSlotsWidget.getMessage().toCharArray()) {
+                if (charIsANumber(c)) {
+                    sb.append(c);
+                }
+            }
+            amountOfFreeSlots = sb.toString();
+        }
+        try {
+            script.log("Amount of free slots for other player: [" + amountOfFreeSlots + "]");
+            return Integer.parseInt(amountOfFreeSlots);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
     public static boolean waitForAccept() {
         new ConditionalSleep(15000, 100) {
             @Override
@@ -40,7 +69,7 @@ public class Trader {
             }
         }.sleep();
         if (acceptButtonSelected != null && acceptButtonSelected.isVisible()) {
-            script.log("Accept Button clicked!");
+            script.log("Accept Button has been clicked by other person!");
             return true;
         }
         return false;
@@ -59,7 +88,7 @@ public class Trader {
         if (acceptButton != null && acceptButton.isVisible()) {
             script.log("Accept Button is visible.");
             if (acceptButton.interact("Accept")) {
-                script.log("Accepting Trade!");
+                script.log("Clicking accept!");
                 new ConditionalSleep(10000) {
                     @Override
                     public boolean condition() throws InterruptedException {
@@ -98,7 +127,6 @@ public class Trader {
 
     public static boolean offerAll(Item item) {
         if (script.getWidgets().getWidgetContainingText("Trading with: ") != null) {
-            clickedAccept = false;
             return item.interact("Offer-All");
         }
         return false;

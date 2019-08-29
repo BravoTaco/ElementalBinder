@@ -3,6 +3,8 @@ package gui;
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 import static data.GlobalVariables.*;
 
@@ -126,6 +128,18 @@ public class MuleSettingsGUI {
         buttonPanel.add(cancelButton);
 
         cancelButton.addActionListener(e -> cancel());
+
+        cancelButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                cancelButton.setForeground(Color.red);
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                cancelButton.setForeground(new Color(-10306630));
+            }
+        });
     }
 
     private void initOkButton() {
@@ -136,6 +150,18 @@ public class MuleSettingsGUI {
         buttonPanel.add(okButton);
 
         okButton.addActionListener(e -> ok());
+
+        okButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                okButton.setForeground(Color.green);
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                okButton.setForeground(new Color(-10306630));
+            }
+        });
     }
 
     private void initSettingsPanel() {

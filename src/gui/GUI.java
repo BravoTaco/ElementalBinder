@@ -123,7 +123,7 @@ public class GUI {
         selectRuneLabel = new JLabel();
         selectRuneLabel.setBackground(defaultBackground);
         selectRuneLabel.setForeground(defaultForeground);
-        selectRuneLabel.setText("Select which type of rune to create:");
+        selectRuneLabel.setText("Select a type of rune:");
         GridBagConstraints gbc;
         gbc = new GridBagConstraints();
         gbc.gridx = 0;

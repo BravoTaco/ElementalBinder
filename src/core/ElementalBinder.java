@@ -17,7 +17,7 @@ import java.awt.*;
 
 import static data.GlobalVariables.*;
 
-@ScriptManifest(name = "Elemental Binder", author = "BravoTaco", version = 1.01, info = "Runecrafts F2P Runes.", logo = "https://i.imgur.com/svwoFav.png")
+@ScriptManifest(name = "Elemental Binder", author = "BravoTaco", version = 1.12, info = "Runecrafts F2P Runes.", logo = "https://i.imgur.com/svwoFav.png")
 public class ElementalBinder extends Script {
 
     private final Filter<Item> essenceFilter = item -> item.getName().equals("Rune essence") || item.getName().equals("Pure essence");
@@ -29,8 +29,6 @@ public class ElementalBinder extends Script {
     private Filter<Item> talismanFilter;
     private int startXp;
     private boolean started = false;
-    private Player mule;
-    private Player runecrafter;
 
     @Override
     public void onStart() {
@@ -171,7 +169,6 @@ public class ElementalBinder extends Script {
     private boolean runecrafterNearby() {
         for (Player player : getPlayers().getAll()) {
             if (player.getName().equals(runecrafterName)) {
-                runecrafter = player;
                 return true;
             }
         }
@@ -198,13 +195,15 @@ public class ElementalBinder extends Script {
     }
 
     private boolean hasEssence() {
-        return getInventory().contains(essenceFilter);
+        if (!isMule) {
+            return getInventory().contains(essenceFilter);
+        }
+        return getInventory().contains(essenceFilter) && getInventory().getAmount(essenceFilter) >= 27;
     }
 
     private boolean muleNearby() {
         for (Player player : getPlayers().getAll()) {
             if (muleNames.contains(player.getName())) {
-                mule = player;
                 return true;
             }
         }

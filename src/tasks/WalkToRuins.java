@@ -11,13 +11,15 @@ public class WalkToRuins {
             if (Walker.ruinsWalkEvent()) {
                 script.log("Walked To Ruins!");
             }
-        } else {
+        } else if (script.getObjects().closest("Altar").getConfig() != rune.getAltar().getConfig()) {
             new EnterRuins();
+        } else if (script.getObjects().closest("Altar").getConfig() == rune.getAltar().getConfig()) {
+            new UseAltar();
         }
     }
 
     private boolean ruinsLocationContainsPlayer() {
-        return rune.getRuinsLocation().contains(script.myPlayer());
+        return rune.getRuinsLocation().contains(script.myPlayer()) && rune.getAltar().getConfig() != script.getObjects().closest("Altar").getConfig();
     }
 
 }

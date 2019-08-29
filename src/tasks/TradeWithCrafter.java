@@ -13,10 +13,10 @@ public class TradeWithCrafter {
     private Item essence = script.getInventory().getItem((Filter<Item>) item -> item.getName().equals("Rune essence") || item.getName().equals("Pure essence"));
 
     public TradeWithCrafter() throws InterruptedException {
-        if (crafterExists()) {
+        if (crafterExists() && rune.getRuinsLocation().contains(script.myPlayer())) {
             status = "Trading with crafter!";
             if (Trader.trade(crafter)) {
-                if (Trader.offerItem(essence, 27)) {
+                if (Trader.offerItem(essence, Trader.availableInvSlots())) {
                     if (Trader.acceptTrade(true)) {
                         if (doesNotHaveEssence()) {
                             new GetEssence();
@@ -24,10 +24,12 @@ public class TradeWithCrafter {
                     }
                 }
             }
-        } else {
+        } else if (!crafterExists()) {
             if (waitForCrafter()) {
                 new TradeWithCrafter();
             }
+        } else if (!rune.getRuinsLocation().contains(script.myPlayer())) {
+            new WalkToRuins();
         }
     }
 
@@ -47,7 +49,8 @@ public class TradeWithCrafter {
     }
 
     private boolean doesNotHaveEssence() {
-        return !script.getInventory().contains("Pure essence") && !script.getInventory().contains("Rune essence");
+        return !script.getInventory().contains("Pure essence") && !script.getInventory().contains("Rune essence")
+                || script.getInventory().getAmount("Pure essence") != 27 && script.getInventory().getAmount("Rune essence") != 27;
     }
 
     private boolean crafterExists() {

@@ -34,7 +34,7 @@ public class UseAltar {
     }
 
     private boolean portalExists(){
-        return (portal = script.getObjects().closest("Portal")) != null;
+        return (portal = script.getObjects().closest("Portal")) != null && portal.getConfig() == rune.getPortal().getConfig();
     }
 
     private boolean addRunesCrafted(){
@@ -46,13 +46,13 @@ public class UseAltar {
     }
 
     private boolean altarExists() {
-        return ((altar = script.getObjects().closest("Altar")) != null) && altar.getPosition().isOnMiniMap(script.getBot());
+        return ((altar = script.getObjects().closest("Altar")) != null) && altar.getConfig() == rune.getAltar().getConfig();
     }
 
     private boolean craftRunes() {
         if (altar.interact("Craft-rune")) {
             runesInv = script.getInventory().getAmount(rune.getName());
-            new ConditionalSleep(15000) {
+            new ConditionalSleep(15000, 100) {
                 @Override
                 public boolean condition() throws InterruptedException {
                     return script.myPlayer().isAnimating();

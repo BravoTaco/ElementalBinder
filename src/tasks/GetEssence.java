@@ -1,6 +1,7 @@
 package tasks;
 
 import helpers.Walker;
+import org.osbot.rs07.utility.ConditionalSleep;
 
 import static data.GlobalVariables.*;
 
@@ -26,7 +27,9 @@ public class GetEssence {
                 new GetEssence();
             }
         } else if (openBank()) {
-            new GetEssence();
+            if (waitForBankToOpen()) {
+                new GetEssence();
+            }
         } else if (!Walker.closestBankContainsPlayer()) {
             if (Walker.bankWalkEvent()) {
                 new GetEssence();
@@ -48,6 +51,19 @@ public class GetEssence {
 
     private boolean openBank() throws InterruptedException {
         return script.getBank().open();
+    }
+
+    private boolean waitForBankToOpen() {
+        new ConditionalSleep(10000, 100) {
+            @Override
+            public boolean condition() throws InterruptedException {
+                return script.getBank().isOpen();
+            }
+        }.sleep();
+        if (script.getBank().isOpen()) {
+            return true;
+        }
+        return false;
     }
 
     private boolean bankContainsPureEssence() {
