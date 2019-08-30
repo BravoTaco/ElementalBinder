@@ -65,7 +65,7 @@ public class Trader {
         new ConditionalSleep(15000, 100) {
             @Override
             public boolean condition() throws InterruptedException {
-                return ((acceptButtonSelected = script.getWidgets().getWidgetContainingText("Other player has accepted.")) != null) && acceptButtonSelected.isVisible();
+                return ((acceptButtonSelected = script.getWidgets().getWidgetContainingText("Other player has accepted.")) != null) && acceptButtonSelected.isVisible() || !acceptButton.isVisible();
             }
         }.sleep();
         if (acceptButtonSelected != null && acceptButtonSelected.isVisible()) {
