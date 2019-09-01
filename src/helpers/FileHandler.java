@@ -61,10 +61,7 @@ public class FileHandler {
     }
 
     public static boolean saveInfo(String muleInfo, String rcerInfo) {
-        if (save(muleInfo, rcerInfo)) {
-            return true;
-        }
-        return false;
+        return save(muleInfo, rcerInfo);
     }
 
     private static boolean save(String muleInfo, String rcerInfo) {
