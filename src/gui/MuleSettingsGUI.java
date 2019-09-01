@@ -1,5 +1,7 @@
 package gui;
 
+import helpers.FileHandler;
+
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
@@ -12,6 +14,8 @@ public class MuleSettingsGUI {
     private JDialog mainDialog;
     private JPanel mainPanel;
     private JButton okButton;
+    private JButton saveButton;
+    private JButton loadButton;
     private JPanel buttonPanel;
     private JButton cancelButton;
     private JPanel settingsPanel;
@@ -30,6 +34,8 @@ public class MuleSettingsGUI {
         initMainDialog();
         initMainPanel();
         initButtonPanel();
+        initLoadButton();
+        initSaveButton();
         initCancelButton();
         initOkButton();
         initSettingsPanel();
@@ -96,6 +102,18 @@ public class MuleSettingsGUI {
         mainDialog.dispose();
     }
 
+    private void save() {
+        if (muleNamesTextField.getText() != null && runecraftersNameTextField.getText() != null) {
+            FileHandler.saveInfo(muleNamesTextField.getText(), runecraftersNameTextField.getText());
+        }
+    }
+
+    private void load() {
+        muleNamesTextField.setText(FileHandler.loadMuleInfo());
+        runecraftersNameTextField.setText(FileHandler.loadRcerInfo());
+        mainPanel.update(mainPanel.getGraphics());
+    }
+
     private void initMainDialog() {
         mainDialog = new JDialog();
         mainDialog.setModal(true);
@@ -118,6 +136,50 @@ public class MuleSettingsGUI {
         buttonPanel.setForeground(new Color(-10306630));
         mainPanel.add(buttonPanel, BorderLayout.SOUTH);
         buttonPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), null));
+    }
+
+    private void initSaveButton() {
+        saveButton = new JButton();
+        saveButton.setBackground(new Color(-13553359));
+        saveButton.setForeground(new Color(-10306630));
+        saveButton.setText("Save");
+        buttonPanel.add(saveButton);
+
+        saveButton.addActionListener(e -> save());
+
+        saveButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                saveButton.setForeground(Color.yellow);
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                saveButton.setForeground(new Color(-10306630));
+            }
+        });
+    }
+
+    private void initLoadButton() {
+        loadButton = new JButton();
+        loadButton.setBackground(new Color(-13553359));
+        loadButton.setForeground(new Color(-10306630));
+        loadButton.setText("Load");
+        buttonPanel.add(loadButton);
+
+        loadButton.addActionListener(e -> load());
+
+        loadButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                loadButton.setForeground(Color.ORANGE);
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                loadButton.setForeground(new Color(-10306630));
+            }
+        });
     }
 
     private void initCancelButton() {
