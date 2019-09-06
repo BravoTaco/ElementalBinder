@@ -8,8 +8,10 @@ public class WalkToRuins {
     public WalkToRuins() throws InterruptedException {
         if (!ruinsLocationContainsPlayer()) {
             status = "Walking To Ruins!";
-            if (Walker.ruinsWalkEvent()) {
+            if (Walker.walkToRuins()) {
                 script.log("Walked To Ruins!");
+            } else {
+                Walker.webWalkToRuins();
             }
         } else if (script.getObjects().closest("Altar") != null && script.getObjects().closest("Altar").getConfig() != rune.getAltar().getConfig()) {
             new EnterRuins();

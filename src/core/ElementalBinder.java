@@ -4,6 +4,7 @@ import enums.State;
 import github.VersionChecker;
 import gui.GUI;
 import helpers.Paint;
+import helpers.Walker;
 import org.osbot.rs07.api.filter.Filter;
 import org.osbot.rs07.api.model.Item;
 import org.osbot.rs07.api.model.Player;
@@ -17,7 +18,7 @@ import java.awt.*;
 
 import static data.GlobalVariables.*;
 
-@ScriptManifest(name = "Elemental Binder", author = "BravoTaco", version = 1.2, info = "Runecrafts F2P Runes.", logo = "https://i.imgur.com/svwoFav.png")
+@ScriptManifest(name = "Elemental Binder", author = "BravoTaco", version = 1.5, info = "Runecrafts F2P Runes.", logo = "https://i.imgur.com/svwoFav.png")
 public class ElementalBinder extends Script {
 
     private final Filter<Item> essenceFilter = item -> item.getName().equals("Rune essence") || item.getName().equals("Pure essence");
@@ -35,6 +36,11 @@ public class ElementalBinder extends Script {
         initializeVariables();
         runChecks();
         log("Checks Complete!");
+        if (!hasTiaraOrTalisman() && !hasEssence()) {
+            if (Walker.webWalkToStartupArea()) {
+                log("Walked To Startup Area!");
+            }
+        }
     }
 
 

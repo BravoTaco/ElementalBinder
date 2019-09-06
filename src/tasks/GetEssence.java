@@ -14,10 +14,12 @@ public class GetEssence {
                 if (bankContainsPureEssence()) {
                     if (withdrawEssence("Pure essence")) {
                         script.log("Withdrawn: Pure essence");
+                        script.getBank().close();
                     }
                 } else if (bankContainsRuneEssence()) {
                     if (withdrawEssence("Rune essence")) {
                         script.log("Withdrawn: Rune essence");
+                        script.getBank().close();
                     }
                 } else {
                     script.log("No essence! Stopping Script!");
@@ -31,8 +33,10 @@ public class GetEssence {
                 new GetEssence();
             }
         } else if (!Walker.closestBankContainsPlayer()) {
-            if (Walker.bankWalkEvent()) {
+            if (Walker.walkToBank()) {
                 new GetEssence();
+            } else {
+                Walker.webWalkToBank();
             }
         }
     }

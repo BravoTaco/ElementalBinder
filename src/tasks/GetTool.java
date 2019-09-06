@@ -44,7 +44,7 @@ public class GetTool {
                     new GetTool();
                 } else {
                     if (!Walker.closestBankContainsPlayer()) {
-                        if (Walker.bankWalkEvent()) {
+                        if (Walker.walkToBank()) {
                             new GetTool();
                         }
                     }
