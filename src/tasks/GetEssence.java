@@ -64,10 +64,7 @@ public class GetEssence {
                 return script.getBank().isOpen();
             }
         }.sleep();
-        if (script.getBank().isOpen()) {
-            return true;
-        }
-        return false;
+        return script.getBank().isOpen();
     }
 
     private boolean bankContainsPureEssence() {

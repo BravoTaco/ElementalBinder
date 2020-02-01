@@ -38,7 +38,7 @@ public class UsePortal {
 
     private boolean usePortal() {
         if (portal.interact("Use")) {
-            new ConditionalSleep(15000, 100) {
+            new ConditionalSleep(3000, 100) {
                 @Override
                 public boolean condition() throws InterruptedException {
                     return !portal.isVisible() || !portalExists();
