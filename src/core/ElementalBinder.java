@@ -15,12 +15,11 @@ import org.osbot.rs07.script.Script;
 import org.osbot.rs07.script.ScriptManifest;
 import tasks.*;
 
-import javax.swing.*;
 import java.awt.*;
 
 import static data.GlobalVariables.*;
 
-@ScriptManifest(name = "Elemental Binder", author = "BravoTaco", version = 1.5, info = "Runecrafts F2P Runes.", logo = "https://i.imgur.com/svwoFav.png")
+@ScriptManifest(name = "Elemental Binder", author = "BravoTaco", version = 1.55, info = "Runecrafts F2P Runes.", logo = "https://i.imgur.com/svwoFav.png")
 public class ElementalBinder extends Script {
 
     private final Filter<Item> essenceFilter = item -> item.getName().equals("Rune essence") || item.getName().equals("Pure essence");
@@ -48,7 +47,7 @@ public class ElementalBinder extends Script {
 
     @Override
     public void onExit() {
-
+        log("Script exited. Leave feedback at: https://osbot.org/forum/topic/156306-elemental-binder-open-source-runecrafter");
     }
 
     @Override
@@ -114,7 +113,7 @@ public class ElementalBinder extends Script {
 
     }
 
-    private void initializeVariables(){
+    private void initializeVariables() {
         script = this;
         gui = new GUI();
         rcLevel = getSkills().getStatic(Skill.RUNECRAFTING);
@@ -124,8 +123,8 @@ public class ElementalBinder extends Script {
         started = true;
     }
 
-    private void runChecks(){
-        if(VersionChecker.needsUpdated("BravoTaco", "Elemental-Binder", getVersion())){
+    private void runChecks() {
+        if (VersionChecker.needsUpdated("BravoTaco", "Elemental-Binder", getVersion())) {
             log("Newer Version Available on GitHub. Link: https://github.com/BravoTaco/Elemental-Binder/releases");
         } else {
             log("Script Up-To-Date!");

@@ -17,14 +17,14 @@ public class UsePortal {
                     new GetEssence();
                 }
             }
-        } else if (portalIsNotVisible()){
-            if(walkToPortal()){
+        } else if (portalIsNotVisible()) {
+            if (walkToPortal()) {
                 new UsePortal();
             }
         }
     }
 
-    private boolean walkToPortal(){
+    private boolean walkToPortal() {
         return script.getWalking().walk(portal);
     }
 
@@ -32,7 +32,7 @@ public class UsePortal {
         return ((portal = script.getObjects().closest("Portal")) != null) && portal.getPosition().isOnMiniMap(script.getBot());
     }
 
-    private boolean portalIsNotVisible(){
+    private boolean portalIsNotVisible() {
         return portal != null && !portal.isVisible();
     }
 
