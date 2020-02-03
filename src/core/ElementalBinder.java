@@ -35,8 +35,12 @@ public class ElementalBinder extends Script {
     @Override
     public void onStart() {
         initializeVariables();
-        runChecks();
-        log("Checks Complete!");
+        if (runChecks()) {
+            log("Checks Complete!");
+        } else {
+            stop(false);
+            return;
+        }
         if (!hasTiaraOrTalisman() && !hasEssence()) {
             if (Walker.webWalkToStartupArea()) {
                 log("Walked To Startup Area!");
@@ -123,7 +127,7 @@ public class ElementalBinder extends Script {
         started = true;
     }
 
-    private void runChecks() {
+    private boolean runChecks() {
         if (VersionChecker.needsUpdated("BravoTaco", "Elemental-Binder", getVersion())) {
             log("Newer Version Available on GitHub. Link: https://github.com/BravoTaco/Elemental-Binder/releases");
             JOptionPane.showMessageDialog(getBot().getCanvas(), "Newer version is available on GitHub! \n https://github.com/BravoTaco/Elemental-Binder/releases");
@@ -132,7 +136,7 @@ public class ElementalBinder extends Script {
         }
         gui.show();
         if (gui.exited()) {
-            stop(false);
+            return false;
         } else {
             tiaraFilter = item -> item.getName().equals(tiara.getName());
             talismanFilter = item -> item.getName().equals(talisman.getName());
@@ -142,6 +146,7 @@ public class ElementalBinder extends Script {
                 stop(false);
             }
         }
+        return true;
     }
 
     private State setState() {
