@@ -18,7 +18,8 @@ public class Walker {
     public static Area closestBankToRuins() {
         closestBank = banks[0];
         for (int i = 1; i < banks.length; i++) {
-            if (banks[i].getCentralPosition().distance(rune.getRuinsLocation().getCentralPosition()) < closestBank.getCentralPosition().distance(rune.getRuinsLocation().getCentralPosition())) {
+            if (banks[i].getCentralPosition().distance(
+                    rune.getRuinsLocation().getCentralPosition()) < closestBank.getCentralPosition().distance(rune.getRuinsLocation().getCentralPosition())) {
                 closestBank = banks[i];
             }
         }
@@ -36,65 +37,48 @@ public class Walker {
     }
 
     public static boolean webWalkToStartupArea() {
-        status = "Walking to Startup Area!";
-        WebWalkEvent webWalkEvent = new WebWalkEvent(closestBankToRuins());
-        webWalkEvent.setEnergyThreshold(10);
-        script.execute(webWalkEvent);
-        return webWalkEvent.getStatus().equals(Event.EventStatus.FINISHED);
+        return webWalkToBank();
     }
 
     public static boolean webWalkToBank() {
-        status = "Walking to Startup Area!";
-        WebWalkEvent webWalkEvent = new WebWalkEvent(closestBankToRuins());
-        webWalkEvent.setEnergyThreshold(10);
-        script.execute(webWalkEvent);
-        return webWalkEvent.getStatus().equals(Event.EventStatus.FINISHED);
+        status = "WebWalking to Bank Area!";
+        return webWalkingEvent(closestBankToRuins());
     }
 
     public static boolean webWalkToRuins() {
-        status = "Walking to Ruins!";
-        WebWalkEvent webWalkEvent = new WebWalkEvent(rune.getRuinsLocation());
-        webWalkEvent.setEnergyThreshold(10);
-        script.execute(webWalkEvent);
-        return webWalkEvent.getStatus().equals(Event.EventStatus.FINISHED);
+        status = "WebWalking to Ruins!";
+        return webWalkingEvent(rune.getRuinsLocation());
     }
 
     public static boolean walkToBank() {
         status = "Walking Path to Bank!";
-        Random rnd = new Random(System.currentTimeMillis());
-        int rndNumber = rnd.nextInt(3);
-        LinkedList<Position> posList = new LinkedList<>();
-        Position[] walkPath = rune.getWalkPaths()[rndNumber];
-        for (Position pos : walkPath) {
-            posList.add(pos);
-        }
-        Collections.reverse(posList);
-        WalkingEvent walkingEvent = new WalkingEvent();
-        walkingEvent.setPath(posList);
-        walkingEvent.setEnergyThreshold(10);
-        script.execute(walkingEvent);
-        if (closestBankToRuins().contains(script.myPlayer())) {
-            return true;
-        }
-        return false;
+        return walkingEvent(rune.getWalkPaths(), true);
     }
 
     public static boolean walkToRuins() {
         status = "Walking Path to Ruins!";
+        return walkingEvent(rune.getWalkPaths(), false);
+    }
+
+    private static boolean webWalkingEvent(Area area) {
+        WebWalkEvent webWalkEvent = new WebWalkEvent(area);
+        webWalkEvent.setEnergyThreshold(10);
+        script.execute(webWalkEvent);
+        return webWalkEvent.getStatus().equals(Event.EventStatus.FINISHED);
+    }
+
+    private static boolean walkingEvent(Position[][] path, boolean reverse) {
         Random rnd = new Random(System.currentTimeMillis());
         int rndNumber = rnd.nextInt(3);
         LinkedList<Position> posList = new LinkedList<>();
-        Position[] walkPath = rune.getWalkPaths()[rndNumber];
-        for (Position pos : walkPath) {
-            posList.add(pos);
-        }
+        Position[] walkPath = path[rndNumber];
+        Collections.addAll(posList, walkPath);
+        if (reverse)
+            Collections.reverse(posList);
         WalkingEvent walkingEvent = new WalkingEvent();
         walkingEvent.setPath(posList);
         walkingEvent.setEnergyThreshold(10);
         script.execute(walkingEvent);
-        if (rune.getRuinsLocation().contains(script.myPlayer())) {
-            return true;
-        }
-        return false;
+        return rune.getRuinsLocation().contains(script.myPlayer());
     }
 }

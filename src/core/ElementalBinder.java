@@ -3,7 +3,6 @@ package core;
 import enums.State;
 import github.VersionChecker;
 import gui.GUI;
-import helpers.MessageBox;
 import helpers.Paint;
 import helpers.Walker;
 import org.osbot.rs07.api.filter.Filter;
@@ -15,6 +14,7 @@ import org.osbot.rs07.script.Script;
 import org.osbot.rs07.script.ScriptManifest;
 import tasks.*;
 
+import javax.swing.*;
 import java.awt.*;
 
 import static data.GlobalVariables.*;
@@ -137,7 +137,7 @@ public class ElementalBinder extends Script {
             talismanFilter = item -> item.getName().equals(talisman.getName());
             if (rune.getLevelRequirement() > getSkills().getStatic(Skill.RUNECRAFTING) && !isMule) {
                 log("Level Requirement not met! Stopping script!");
-                new MessageBox("Runecrafting level does meet specified requirement of: " + rune.getLevelRequirement()).showMessage();
+                JOptionPane.showMessageDialog(getBot().getCanvas(), "Runecrafting level does meet \n specified requirement of: " + rune.getLevelRequirement());
                 stop(false);
             }
         }
