@@ -36,7 +36,11 @@ public class GetEssence {
             if (Walker.walkToBank()) {
                 new GetEssence();
             } else {
-                Walker.webWalkToBank();
+                if (Walker.webWalkToBank()) {
+                    new GetEssence();
+                } else {
+                    script.log("Unable to walk to bank!");
+                }
             }
         }
     }

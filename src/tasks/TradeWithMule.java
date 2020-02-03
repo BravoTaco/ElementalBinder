@@ -9,8 +9,8 @@ public class TradeWithMule {
     Player mule;
 
     public TradeWithMule() throws InterruptedException {
-        status = "Trading with mule!";
         if (muleExists()) {
+            status = "Trading with mule!";
             if (Trader.trade(mule)) {
                 if (Trader.waitForAccept()) {
                     if (Trader.acceptTrade(false)) {
@@ -33,10 +33,12 @@ public class TradeWithMule {
 
     private boolean muleExists() {
         for (Player player : script.getPlayers().getAll()) {
-            if (player != null) {
-                if (muleNames.contains(player.getName()) && rune.getRuinsLocation().contains(player)) {
-                    mule = player;
-                    return true;
+            if (player != null && rune.getRuinsLocation().contains(player)) {
+                for (String s : muleNames) {
+                    if (player.getName().contains(s)) {
+                        mule = player;
+                        return true;
+                    }
                 }
             }
         }

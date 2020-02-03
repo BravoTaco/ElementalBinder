@@ -78,7 +78,12 @@ public class Walker {
         WalkingEvent walkingEvent = new WalkingEvent();
         walkingEvent.setPath(posList);
         walkingEvent.setEnergyThreshold(10);
-        script.execute(walkingEvent);
+        for (Position position : walkPath) {
+            if (script.getMap().canReach(position)) {
+                script.execute(walkingEvent);
+                break;
+            }
+        }
         return rune.getRuinsLocation().contains(script.myPlayer());
     }
 }

@@ -1,7 +1,6 @@
 package tasks;
 
 import helpers.Trader;
-import org.osbot.rs07.api.filter.Filter;
 import org.osbot.rs07.api.model.Item;
 import org.osbot.rs07.api.model.Player;
 import org.osbot.rs07.utility.ConditionalSleep;
@@ -10,13 +9,13 @@ import static data.GlobalVariables.*;
 
 public class TradeWithCrafter {
     private Player crafter;
-    private Item essence = script.getInventory().getItem((Filter<Item>) item -> item.getName().equals("Rune essence") || item.getName().equals("Pure essence"));
+    private Item essence = script.getInventory().getItem(item -> item.getName().equals("Rune essence") || item.getName().equals("Pure essence"));
 
     public TradeWithCrafter() throws InterruptedException {
         if (crafterExists() && rune.getRuinsLocation().contains(script.myPlayer())) {
             status = "Trading with crafter!";
             if (Trader.trade(crafter)) {
-                if (Trader.offerItem(essence, Trader.availableInvSlots())) {
+                if (Trader.offerAll(essence)) {
                     if (Trader.acceptTrade(true)) {
                         if (doesNotHaveEssence()) {
                             new GetEssence();
@@ -42,10 +41,7 @@ public class TradeWithCrafter {
                 return crafterExists();
             }
         }.sleep();
-        if (crafterExists()) {
-            return true;
-        }
-        return false;
+        return crafterExists();
     }
 
     private boolean doesNotHaveEssence() {

@@ -19,7 +19,7 @@ import java.awt.*;
 
 import static data.GlobalVariables.*;
 
-@ScriptManifest(name = "Elemental Binder", author = "BravoTaco", version = 1.56, info = "Runecrafts F2P Runes.", logo = "https://i.imgur.com/svwoFav.png")
+@ScriptManifest(name = "Elemental Binder", author = "BravoTaco", version = 1.58, info = "Runecrafts F2P Runes.", logo = "https://i.imgur.com/svwoFav.png")
 public class ElementalBinder extends Script {
 
     private final Filter<Item> essenceFilter = item -> item.getName().equals("Rune essence") || item.getName().equals("Pure essence");
@@ -209,16 +209,17 @@ public class ElementalBinder extends Script {
     }
 
     private boolean hasEssence() {
-        if (!isMule) {
-            return getInventory().contains(essenceFilter);
-        }
-        return getInventory().contains(essenceFilter) && getInventory().getAmount(essenceFilter) >= 27;
+        return getInventory().contains(essenceFilter);
     }
 
     private boolean muleNearby() {
         for (Player player : getPlayers().getAll()) {
-            if (muleNames.contains(player.getName())) {
-                return true;
+            if (rune.getRuinsLocation().contains(player)) {
+                for (String s : muleNames) {
+                    if (player.getName().contains(s) && player != myPlayer()) {
+                        return true;
+                    }
+                }
             }
         }
         return false;
