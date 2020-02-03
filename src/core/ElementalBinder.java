@@ -19,7 +19,7 @@ import java.awt.*;
 
 import static data.GlobalVariables.*;
 
-@ScriptManifest(name = "Elemental Binder", author = "BravoTaco", version = 1.55, info = "Runecrafts F2P Runes.", logo = "https://i.imgur.com/svwoFav.png")
+@ScriptManifest(name = "Elemental Binder", author = "BravoTaco", version = 1.56, info = "Runecrafts F2P Runes.", logo = "https://i.imgur.com/svwoFav.png")
 public class ElementalBinder extends Script {
 
     private final Filter<Item> essenceFilter = item -> item.getName().equals("Rune essence") || item.getName().equals("Pure essence");
@@ -126,6 +126,7 @@ public class ElementalBinder extends Script {
     private void runChecks() {
         if (VersionChecker.needsUpdated("BravoTaco", "Elemental-Binder", getVersion())) {
             log("Newer Version Available on GitHub. Link: https://github.com/BravoTaco/Elemental-Binder/releases");
+            JOptionPane.showMessageDialog(getBot().getCanvas(), "Newer version is available on GitHub! \n https://github.com/BravoTaco/Elemental-Binder/releases");
         } else {
             log("Script Up-To-Date!");
         }
