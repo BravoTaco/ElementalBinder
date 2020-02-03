@@ -15,11 +15,11 @@ public class UseAltar {
         status = "Using altar!";
         if (altarExists()) {
             if (craftRunes()) {
-                if(addRunesCrafted()){
+                if (addRunesCrafted()) {
                     script.log("Crafted runes and Added them to the counter!");
-                    if(portalExists()){
+                    if (portalExists()) {
                         status = "Walking To Portal!";
-                        if(walkToPortal()){
+                        if (walkToPortal()) {
                             script.log("Walked To Portal!");
                             new UsePortal();
                         }
@@ -29,16 +29,16 @@ public class UseAltar {
         }
     }
 
-    private boolean walkToPortal(){
+    private boolean walkToPortal() {
         return script.getWalking().walk(portal);
     }
 
-    private boolean portalExists(){
+    private boolean portalExists() {
         return (portal = script.getObjects().closest("Portal")) != null && portal.getConfig() == rune.getPortal().getConfig();
     }
 
-    private boolean addRunesCrafted(){
-        if(script.getInventory().contains(rune.getName())){
+    private boolean addRunesCrafted() {
+        if (script.getInventory().contains(rune.getName())) {
             amountOfRunesMade += (script.getInventory().getAmount(rune.getName()) - runesInv);
             return true;
         }

@@ -25,12 +25,6 @@ public class GUI {
     private Color defaultForeground = new Color(-10306630);
     private Color defaultBackground = new Color(-13553359);
 
-    public static void main(String args[]) {
-        GUI gui = new GUI();
-        gui.show();
-    }
-
-
     public GUI() {
         initializeMainDialog();
         initializeMainPanel();
@@ -41,11 +35,16 @@ public class GUI {
         initializeRuneCB();
     }
 
-    public void show(){
+    public static void main(String[] args) {
+        GUI gui = new GUI();
+        gui.show();
+    }
+
+    public void show() {
         mainDialog.setVisible(true);
     }
 
-    public void close(){
+    public void close() {
         mainDialog.setVisible(false);
         mainDialog.dispose();
     }
@@ -55,13 +54,13 @@ public class GUI {
         muleSettingsGUI.show();
     }
 
-    public boolean exited(){
+    public boolean exited() {
         return !mainDialog.isVisible() && !closed;
     }
 
-    private void start(){
+    private void start() {
         GlobalVariables.rune = (Runes) runeCB.getSelectedItem();
-        if(GlobalVariables.rune != null){
+        if (GlobalVariables.rune != null) {
             GlobalVariables.talisman = GlobalVariables.rune.getTalisman();
             GlobalVariables.tiara = GlobalVariables.rune.getTiara();
         }
@@ -75,7 +74,7 @@ public class GUI {
         mainDialog.setModal(true);
         mainDialog.setLocationRelativeTo(null);
         mainDialog.setModalityType(Dialog.ModalityType.APPLICATION_MODAL);
-        mainDialog.setMinimumSize(new Dimension(500,300));
+        mainDialog.setMinimumSize(new Dimension(500, 300));
     }
 
     private void initializeMainPanel() {
@@ -105,7 +104,7 @@ public class GUI {
         infoSelectorPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), null));
     }
 
-    private void initializeRuneCB(){
+    private void initializeRuneCB() {
         runeCB = new JComboBox<>(Runes.values());
         runeCB.setBackground(defaultBackground);
         runeCB.setForeground(defaultForeground);
@@ -119,7 +118,7 @@ public class GUI {
         infoSelectorPanel.add(runeCB, gbc);
     }
 
-    private void initializeRuneCBLabel(){
+    private void initializeRuneCBLabel() {
         selectRuneLabel = new JLabel();
         selectRuneLabel.setBackground(defaultBackground);
         selectRuneLabel.setForeground(defaultForeground);

@@ -10,7 +10,7 @@ public enum Portal {
 
     private int config;
 
-    Portal(int config){
+    Portal(int config) {
         this.config = config;
     }
 

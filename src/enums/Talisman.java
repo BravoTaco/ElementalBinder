@@ -10,7 +10,7 @@ public enum Talisman {
 
     private String name;
 
-    Talisman(String name){
+    Talisman(String name) {
         this.name = name;
     }
 

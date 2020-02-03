@@ -10,7 +10,7 @@ public enum Altar {
 
     private int config;
 
-    Altar(int config){
+    Altar(int config) {
         this.config = config;
     }
 

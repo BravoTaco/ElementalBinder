@@ -10,7 +10,7 @@ public enum Tiara {
 
     private String name;
 
-    Tiara(String name){
+    Tiara(String name) {
         this.name = name;
     }
 
