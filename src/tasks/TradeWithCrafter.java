@@ -1,5 +1,6 @@
 package tasks;
 
+import Utils.StringUtilities;
 import helpers.Trader;
 import org.osbot.rs07.api.model.Item;
 import org.osbot.rs07.api.model.Player;
@@ -52,7 +53,7 @@ public class TradeWithCrafter {
     private boolean crafterExists() {
         for (Player player : script.getPlayers().getAll()) {
             if (player != null) {
-                if (player.getName().equals(savedData.runecrafterName())) {
+                if (StringUtilities.stringMatchesBasedOnChars(player.getName(), savedData.runecrafterName())) {
                     crafter = player;
                     return true;
                 }
