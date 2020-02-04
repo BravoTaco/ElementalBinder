@@ -1,5 +1,6 @@
 package tasks;
 
+import Utils.StringUtilities;
 import helpers.Trader;
 import org.osbot.rs07.api.model.Player;
 
@@ -9,7 +10,7 @@ public class TradeWithMule {
     Player mule;
 
     public TradeWithMule() throws InterruptedException {
-        if (muleExists()) {
+        if (muleIsNearby()) {
             status = "Trading with mule!";
             if (Trader.trade(mule)) {
                 if (Trader.waitForAccept()) {
@@ -31,14 +32,13 @@ public class TradeWithMule {
         return script.getInventory().contains("Rune essence") || script.getInventory().contains("Pure essence");
     }
 
-    private boolean muleExists() {
+    private boolean muleIsNearby() {
         for (Player player : script.getPlayers().getAll()) {
-            if (player != null && savedData.selectedRune().getRuinsLocation().contains(player)) {
-                for (String s : savedData.muleNames()) {
-                    if (player.getName().contains(s)) {
-                        mule = player;
-                        return true;
-                    }
+            for (String s : savedData.muleNames()) {
+                if (StringUtilities.stringMatchesBasedOnChars(s, player.getName())) {
+                    script.log("Name Matches!");
+                    mule = player;
+                    return true;
                 }
             }
         }

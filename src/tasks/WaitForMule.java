@@ -1,5 +1,6 @@
 package tasks;
 
+import Utils.StringUtilities;
 import org.osbot.rs07.api.model.Player;
 import org.osbot.rs07.utility.ConditionalSleep;
 
@@ -31,8 +32,9 @@ public class WaitForMule {
 
     private boolean muleIsNearby() {
         for (Player player : script.getPlayers().getAll()) {
-            if (player != null) {
-                if (savedData.muleNames().contains(player.getName()) && savedData.selectedRune().getRuinsLocation().contains(player)) {
+            for (String s : savedData.muleNames()) {
+                if (StringUtilities.stringMatchesBasedOnChars(s, player.getName())) {
+                    script.log("Name Matches!");
                     mule = player;
                     return true;
                 }

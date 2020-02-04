@@ -1,5 +1,6 @@
 package core;
 
+import Utils.StringUtilities;
 import data.GlobalVariables;
 import enums.State;
 import enums.Talisman;
@@ -65,28 +66,39 @@ public class ElementalBinder extends Script {
             log("Not Mule!");
             switch (state) {
                 case GETTOOL:
+                    status = "Get TOOL";
                     new GetTool();
                     break;
                 case GETESSENCE:
+                    status = "Get Essence";
                     new GetEssence();
                     break;
                 case WALKTORUINS:
+                    status = "Walk To Ruins";
                     new WalkToRuins();
                     break;
                 case ENTERRUINS:
+                    status = "Enter Ruins";
                     new EnterRuins();
                     break;
                 case USEALTAR:
+                    status = "Use Altar";
                     new UseAltar();
                     break;
                 case USEPORTAL:
+                    status = "Use Portal";
                     new UsePortal();
                     break;
                 case WAITFORMULE:
+                    status = "Wait For Mule";
                     new WaitForMule();
                     break;
                 case TRADEWITHMULE:
+                    status = "Trade With Mule";
                     new TradeWithMule();
+                    break;
+                default:
+                    status = "Default";
                     break;
             }
         } else if (state != null) {
@@ -99,6 +111,8 @@ public class ElementalBinder extends Script {
                     break;
                 case TRADEWITHCRAFTER:
                     new TradeWithCrafter();
+                    break;
+                default:
                     break;
             }
         }
@@ -170,9 +184,9 @@ public class ElementalBinder extends Script {
                 return State.USEALTAR;
             } else if (portalExists() && !hasEssence()) {
                 return State.USEPORTAL;
-            } else if (!hasEssence() && hasTiaraOrTalisman() && !portalExists() && !altarExists() && savedData.isMuling() && mysteriousRuinsExists() && !muleNearby()) {
+            } else if (!hasEssence() && hasTiaraOrTalisman() && !portalExists() && !altarExists() && savedData.isMuling() && mysteriousRuinsExists() && !muleIsNearby()) {
                 return State.WAITFORMULE;
-            } else if (muleNearby() && !hasEssence() && hasTiaraOrTalisman() && savedData.isMuling()) {
+            } else if (muleIsNearby() && !hasEssence() && hasTiaraOrTalisman() && savedData.isMuling()) {
                 return State.TRADEWITHMULE;
             }
         } else {
@@ -221,14 +235,11 @@ public class ElementalBinder extends Script {
         return getInventory().contains(essenceFilter);
     }
 
-    private boolean muleNearby() {
-        for (Player player : getPlayers().getAll()) {
-            if (savedData.selectedRune().getRuinsLocation().contains(player)) {
-                for (String s : savedData.muleNames()) {
-                    if (player.getName().contains(s) && player != myPlayer()) {
-                        return true;
-                    }
-                }
+    private boolean muleIsNearby() {
+        for (Player player : script.getPlayers().getAll()) {
+            for (String s : savedData.muleNames()) {
+                if (StringUtilities.stringMatchesBasedOnChars(s, player.getName()))
+                    return true;
             }
         }
         return false;
