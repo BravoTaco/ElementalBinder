@@ -1,16 +1,15 @@
 package tasks;
 
-import Utils.StringUtilities;
-import org.osbot.rs07.api.model.Player;
+import Utils.PlayerUtilities;
 import org.osbot.rs07.utility.ConditionalSleep;
 
-import static data.GlobalVariables.*;
+import static data.GlobalVariables.savedData;
+import static data.GlobalVariables.status;
 
 public class WaitForMule {
-    Player mule;
 
     public WaitForMule() throws InterruptedException {
-        if (!muleIsNearby()) {
+        if (PlayerUtilities.getPlayerFromNames(savedData.muleNames()) != null) {
             if (waitForMule()) {
                 new TradeWithMule();
             }
@@ -21,25 +20,13 @@ public class WaitForMule {
 
     private boolean waitForMule() {
         status = "Waiting for mule.";
-        new ConditionalSleep(60000, 4000) {
+        new ConditionalSleep(10000, 1500) {
             @Override
             public boolean condition() throws InterruptedException {
-                return muleIsNearby();
+                return PlayerUtilities.getPlayerFromNames(savedData.muleNames()) != null;
             }
         }.sleep();
-        return muleIsNearby();
+        return PlayerUtilities.getPlayerFromNames(savedData.muleNames()) != null;
     }
 
-    private boolean muleIsNearby() {
-        for (Player player : script.getPlayers().getAll()) {
-            for (String s : savedData.muleNames()) {
-                if (StringUtilities.stringMatchesBasedOnChars(s, player.getName())) {
-                    script.log("Name Matches!");
-                    mule = player;
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
 }

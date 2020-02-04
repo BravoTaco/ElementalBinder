@@ -23,7 +23,7 @@ import java.awt.*;
 
 import static data.GlobalVariables.*;
 
-@ScriptManifest(name = "Elemental Binder", author = "BravoTaco", version = 1.8, info = "Runecrafts F2P Runes.", logo = "https://i.imgur.com/svwoFav.png")
+@ScriptManifest(name = "Elemental Binder", author = "BravoTaco", version = 1.85, info = "Runecrafts F2P Runes.", logo = "https://i.imgur.com/svwoFav.png")
 public class ElementalBinder extends Script {
 
     private final Filter<Item> essenceFilter = item -> item.getName().equals("Rune essence") || item.getName().equals("Pure essence");
@@ -66,35 +66,27 @@ public class ElementalBinder extends Script {
             log("Not Mule!");
             switch (state) {
                 case GETTOOL:
-                    status = "Get TOOL";
                     new GetTool();
                     break;
                 case GETESSENCE:
-                    status = "Get Essence";
                     new GetEssence();
                     break;
                 case WALKTORUINS:
-                    status = "Walk To Ruins";
                     new WalkToRuins();
                     break;
                 case ENTERRUINS:
-                    status = "Enter Ruins";
                     new EnterRuins();
                     break;
                 case USEALTAR:
-                    status = "Use Altar";
                     new UseAltar();
                     break;
                 case USEPORTAL:
-                    status = "Use Portal";
                     new UsePortal();
                     break;
                 case WAITFORMULE:
-                    status = "Wait For Mule";
                     new WaitForMule();
                     break;
                 case TRADEWITHMULE:
-                    status = "Trade With Mule";
                     new TradeWithMule();
                     break;
                 default:
