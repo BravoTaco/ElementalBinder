@@ -23,6 +23,9 @@ public class VersionChecker {
             infoCache = new InfoCache(gitHubUserName, gitHubProjectName, thisScriptVersion);
             getVersions(infoCache);
         }
+        System.out.println("GitHub Version: [" + gitHubVersion + "] :: " + "Script Version: [" + currentVersion + "]");
+        if (gitHubVersion < currentVersion)
+            System.out.println("Currently using experimental build!");
         return gitHubVersion > currentVersion;
     }
 

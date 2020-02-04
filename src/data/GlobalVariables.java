@@ -1,13 +1,8 @@
 package data;
 
-import enums.Runes;
-import enums.Talisman;
-import enums.Tiara;
 import org.osbot.rs07.api.map.Area;
 import org.osbot.rs07.api.map.constants.Banks;
 import org.osbot.rs07.script.Script;
-
-import java.util.ArrayList;
 
 public abstract class GlobalVariables {
     public static int rcLevel;
@@ -15,15 +10,7 @@ public abstract class GlobalVariables {
     public static Script script;
 
     public static String status = "";
-    public static String runecrafterName = "";
-    public static ArrayList<String> muleNames = new ArrayList<>();
-
-    public static boolean mulingEnabled = false;
-    public static boolean isMule = false;
-
-    public static Tiara tiara;
-    public static Talisman talisman;
-    public static Runes rune;
+    public static SavedData savedData = new SavedData();
 
     public static long amountOfRunesMade = 0;
 

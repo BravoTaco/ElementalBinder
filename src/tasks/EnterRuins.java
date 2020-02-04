@@ -11,7 +11,7 @@ public class EnterRuins {
     private RS2Object altar;
 
     public EnterRuins() throws InterruptedException {
-        if (!isMule) {
+        if (!savedData.isMule()) {
             status = "Entering Ruins!";
             if (ruinsExists()) {
                 if (enterRuins()) {
@@ -37,7 +37,7 @@ public class EnterRuins {
     }
 
     private boolean altarExists() {
-        return ((altar = script.getObjects().closest("Altar")) != null) && altar.getConfig() == rune.getAltar().getConfig();
+        return ((altar = script.getObjects().closest("Altar")) != null) && altar.getConfig() == savedData.selectedRune().getAltar().getConfig();
     }
 
     private boolean walkToRuins() {
@@ -49,24 +49,24 @@ public class EnterRuins {
     }
 
     private boolean enterRuins() {
-        if (script.getInventory().contains(talisman.getName())) {
-            if (script.getInventory().interact("Use", talisman.getName())) {
+        if (script.getInventory().contains(savedData.talisman().getName())) {
+            if (script.getInventory().interact("Use", savedData.talisman().getName())) {
                 if (ruins.interact("Use")) {
                     new ConditionalSleep(15000, 100) {
                         @Override
                         public boolean condition() throws InterruptedException {
-                            return (script.getObjects().closest("Altar") != null) && altar.getConfig() == rune.getAltar().getConfig();
+                            return (script.getObjects().closest("Altar") != null) && altar.getConfig() == savedData.selectedRune().getAltar().getConfig();
                         }
                     }.sleep();
                     return true;
                 }
             }
-        } else if (script.getEquipment().getItem(tiara.getName()) != null) {
+        } else if (script.getEquipment().getItem(savedData.tiara().getName()) != null) {
             if (ruins.interact("Enter")) {
                 new ConditionalSleep(15000, 100) {
                     @Override
                     public boolean condition() throws InterruptedException {
-                        return !rune.getRuinsLocation().contains(script.myPlayer());
+                        return !savedData.selectedRune().getRuinsLocation().contains(script.myPlayer());
                     }
                 }.sleep();
                 return true;

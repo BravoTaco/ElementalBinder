@@ -33,8 +33,8 @@ public class TradeWithMule {
 
     private boolean muleExists() {
         for (Player player : script.getPlayers().getAll()) {
-            if (player != null && rune.getRuinsLocation().contains(player)) {
-                for (String s : muleNames) {
+            if (player != null && savedData.selectedRune().getRuinsLocation().contains(player)) {
+                for (String s : savedData.muleNames()) {
                     if (player.getName().contains(s)) {
                         mule = player;
                         return true;

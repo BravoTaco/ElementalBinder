@@ -50,11 +50,11 @@ public class GetEssence {
     }
 
     private boolean inventoryIsEmptyExceptTalisman() {
-        return script.getInventory().isEmptyExcept(talisman.getName());
+        return script.getInventory().isEmptyExcept(savedData.talisman().getName());
     }
 
     private boolean depositAllExceptTalisman() {
-        return script.getBank().depositAllExcept(talisman.getName());
+        return script.getBank().depositAllExcept(savedData.talisman().getName());
     }
 
     private boolean openBank() throws InterruptedException {
@@ -80,7 +80,7 @@ public class GetEssence {
     }
 
     private boolean withdrawEssence(String name) {
-        if (isMule) {
+        if (savedData.isMuling()) {
             return script.getBank().withdraw(name, 27);
         }
         return script.getBank().withdrawAll(name);

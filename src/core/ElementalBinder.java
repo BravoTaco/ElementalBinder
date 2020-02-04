@@ -1,6 +1,9 @@
 package core;
 
+import data.GlobalVariables;
 import enums.State;
+import enums.Talisman;
+import enums.Tiara;
 import github.VersionChecker;
 import gui.GUI;
 import helpers.Paint;
@@ -19,18 +22,19 @@ import java.awt.*;
 
 import static data.GlobalVariables.*;
 
-@ScriptManifest(name = "Elemental Binder", author = "BravoTaco", version = 1.58, info = "Runecrafts F2P Runes.", logo = "https://i.imgur.com/svwoFav.png")
+@ScriptManifest(name = "Elemental Binder", author = "BravoTaco", version = 1.8, info = "Runecrafts F2P Runes.", logo = "https://i.imgur.com/svwoFav.png")
 public class ElementalBinder extends Script {
 
     private final Filter<Item> essenceFilter = item -> item.getName().equals("Rune essence") || item.getName().equals("Pure essence");
     private final long startTime = System.currentTimeMillis();
-    private GUI gui;
     private Paint paint;
     private State state;
     private Filter<Item> tiaraFilter;
     private Filter<Item> talismanFilter;
     private int startXp;
     private boolean started = false;
+
+    private GUI gui;
 
     @Override
     public void onStart() {
@@ -57,7 +61,8 @@ public class ElementalBinder extends Script {
     @Override
     public int onLoop() throws InterruptedException {
         state = setState();
-        if (state != null && !isMule) {
+        if (state != null && !savedData.isMule()) {
+            log("Not Mule!");
             switch (state) {
                 case GETTOOL:
                     new GetTool();
@@ -119,7 +124,6 @@ public class ElementalBinder extends Script {
 
     private void initializeVariables() {
         script = this;
-        gui = new GUI();
         rcLevel = getSkills().getStatic(Skill.RUNECRAFTING);
         getExperienceTracker().start(Skill.RUNECRAFTING);
         startXp = getSkills().getExperience(Skill.RUNECRAFTING);
@@ -128,21 +132,24 @@ public class ElementalBinder extends Script {
     }
 
     private boolean runChecks() {
-        if (VersionChecker.needsUpdated("BravoTaco", "Elemental-Binder", getVersion())) {
+        if (VersionChecker.needsUpdated("BravoTaco", "ElementalBinder", getVersion())) {
             log("Newer Version Available on GitHub. Link: https://github.com/BravoTaco/Elemental-Binder/releases");
             JOptionPane.showMessageDialog(getBot().getCanvas(), "Newer version is available on GitHub! \n https://github.com/BravoTaco/Elemental-Binder/releases");
         } else {
             log("Script Up-To-Date!");
         }
-        gui.show();
-        if (gui.exited()) {
+        gui = new GUI();
+        gui.start();
+        if (gui.wasExited()) {
             return false;
         } else {
-            tiaraFilter = item -> item.getName().equals(tiara.getName());
-            talismanFilter = item -> item.getName().equals(talisman.getName());
-            if (rune.getLevelRequirement() > getSkills().getStatic(Skill.RUNECRAFTING) && !isMule) {
+            savedData.setTiara(getTiaraBasedOnRune());
+            savedData.setTalisman(getTalismanBasedOnRune());
+            tiaraFilter = item -> item.getName().equals(savedData.tiara().getName());
+            talismanFilter = item -> item.getName().equals(savedData.talisman().getName());
+            if (savedData.selectedRune().getLevelRequirement() > getSkills().getStatic(Skill.RUNECRAFTING) && !savedData.isMule()) {
                 log("Level Requirement not met! Stopping script!");
-                JOptionPane.showMessageDialog(getBot().getCanvas(), "Runecrafting level does meet \n specified requirement of: " + rune.getLevelRequirement());
+                JOptionPane.showMessageDialog(getBot().getCanvas(), "Runecrafting level does meet \n specified requirement of: " + savedData.selectedRune().getLevelRequirement());
                 stop(false);
             }
         }
@@ -150,10 +157,10 @@ public class ElementalBinder extends Script {
     }
 
     private State setState() {
-        if (!isMule) {
+        if (!savedData.isMule()) {
             if (!hasTiaraOrTalisman()) {
                 return State.GETTOOL;
-            } else if (!hasEssence() && hasTiaraOrTalisman() && !portalExists() && !altarExists() && !mulingEnabled) {
+            } else if (!hasEssence() && hasTiaraOrTalisman() && !portalExists() && !altarExists() && !savedData.isMuling()) {
                 return State.GETESSENCE;
             } else if (hasEssence() && !portalExists() && !altarExists() && !mysteriousRuinsExists()) {
                 return State.WALKTORUINS;
@@ -163,18 +170,20 @@ public class ElementalBinder extends Script {
                 return State.USEALTAR;
             } else if (portalExists() && !hasEssence()) {
                 return State.USEPORTAL;
-            } else if (!hasEssence() && hasTiaraOrTalisman() && !portalExists() && !altarExists() && mulingEnabled && mysteriousRuinsExists() && !muleNearby()) {
+            } else if (!hasEssence() && hasTiaraOrTalisman() && !portalExists() && !altarExists() && savedData.isMuling() && mysteriousRuinsExists() && !muleNearby()) {
                 return State.WAITFORMULE;
-            } else if (muleNearby() && !hasEssence() && hasTiaraOrTalisman() && mulingEnabled) {
+            } else if (muleNearby() && !hasEssence() && hasTiaraOrTalisman() && savedData.isMuling()) {
                 return State.TRADEWITHMULE;
             }
         } else {
             if (!hasEssence()) {
                 return State.GETESSENCE;
-            } else if (hasEssence() && !mysteriousRuinsExists()) {
+            } else if (hasEssence() && !savedData.selectedRune().getRuinsLocation().contains(myPlayer())) {
                 return State.WALKTORUINS;
-            } else if (hasEssence() && mysteriousRuinsExists() && runecrafterNearby()) {
+            } else if (hasEssence() && savedData.selectedRune().getRuinsLocation().contains(myPlayer()) && runecrafterNearby()) {
                 return State.TRADEWITHCRAFTER;
+            } else if (hasEssence() && savedData.selectedRune().getRuinsLocation().contains(myPlayer()) && !runecrafterNearby()) {
+                status = "Waiting for crafter!";
             }
         }
         return null;
@@ -182,7 +191,7 @@ public class ElementalBinder extends Script {
 
     private boolean runecrafterNearby() {
         for (Player player : getPlayers().getAll()) {
-            if (player.getName().equals(runecrafterName)) {
+            if (player.getName().equals(savedData.runecrafterName())) {
                 return true;
             }
         }
@@ -196,12 +205,12 @@ public class ElementalBinder extends Script {
 
     private boolean portalExists() {
         RS2Object portal;
-        return ((portal = getObjects().closest("Portal")) != null && portal.getConfig() == rune.getPortal().getConfig());
+        return ((portal = getObjects().closest("Portal")) != null && portal.getConfig() == savedData.selectedRune().getPortal().getConfig());
     }
 
     private boolean altarExists() {
         RS2Object altar;
-        return ((altar = getObjects().closest("Altar")) != null && altar.getConfig() == rune.getAltar().getConfig());
+        return ((altar = getObjects().closest("Altar")) != null && altar.getConfig() == savedData.selectedRune().getAltar().getConfig());
     }
 
     private boolean hasTiaraOrTalisman() {
@@ -214,8 +223,8 @@ public class ElementalBinder extends Script {
 
     private boolean muleNearby() {
         for (Player player : getPlayers().getAll()) {
-            if (rune.getRuinsLocation().contains(player)) {
-                for (String s : muleNames) {
+            if (savedData.selectedRune().getRuinsLocation().contains(player)) {
+                for (String s : savedData.muleNames()) {
                     if (player.getName().contains(s) && player != myPlayer()) {
                         return true;
                     }
@@ -223,6 +232,44 @@ public class ElementalBinder extends Script {
             }
         }
         return false;
+    }
+
+    private Talisman getTalismanBasedOnRune() {
+        switch (GlobalVariables.savedData.selectedRune()) {
+            case AIR:
+                return Talisman.AIR;
+            case MIND:
+                return Talisman.MIND;
+            case WATER:
+                return Talisman.WATER;
+            case EARTH:
+                return Talisman.EARTH;
+            case FIRE:
+                return Talisman.FIRE;
+            case BODY:
+                return Talisman.BODY;
+            default:
+                return null;
+        }
+    }
+
+    private Tiara getTiaraBasedOnRune() {
+        switch (GlobalVariables.savedData.selectedRune()) {
+            case AIR:
+                return Tiara.AIR;
+            case MIND:
+                return Tiara.MIND;
+            case WATER:
+                return Tiara.WATER;
+            case EARTH:
+                return Tiara.EARTH;
+            case FIRE:
+                return Tiara.FIRE;
+            case BODY:
+                return Tiara.BODY;
+            default:
+                return null;
+        }
     }
 
 }

@@ -13,7 +13,7 @@ public class UsePortal {
         if (portalExists()) {
             if (usePortal()) {
                 script.log("Used Portal!");
-                if (!mulingEnabled) {
+                if (!savedData.isMuling()) {
                     new GetEssence();
                 }
             }

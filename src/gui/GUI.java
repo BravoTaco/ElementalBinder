@@ -1,220 +1,462 @@
 package gui;
 
+import Utils.ArrayUtilities;
+import Utils.StringUtilities;
 import data.GlobalVariables;
 import enums.Runes;
+import github.VersionChecker;
+import helpers.FileHandler;
 
 import javax.swing.*;
-import javax.swing.border.TitledBorder;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-public class GUI {
+class Driver {
+    public static void main(String... args) {
+        GUI gui = new GUI();
+        gui.start();
+    }
+}
+
+public class GUI extends JDialog {
+
+    private boolean startClicked;
+
+    private JMenuBar menuBar;
+    private JMenu saveLoadMenu;
+    private JMenuItem saveMuleItem;
+    private JMenuItem loadMuleItem;
+    private JMenuItem saveCrafterItem;
+    private JMenuItem loadCrafterItem;
+    private JMenu settingsMenu;
+    private JMenuItem baseSettings;
+    private JMenuItem muleSettings;
+
     private JPanel mainPanel;
-    private JPanel startCancelPanel;
-    private JButton cancelButton;
+    private JPanel southPanel;
+    private JPanel settingsPanel;
+
+    private JPanel baseSettingsPanel;
+    private JPanel muleSettingsPanel;
+    private JPanel buttonsPanel;
+
     private JButton startButton;
-    private JButton muleSettings;
-    private JPanel infoSelectorPanel;
-    private JLabel selectRuneLabel;
-    private JComboBox<Runes> runeCB;
-    private JDialog mainDialog;
+    private JButton cancelButton;
 
-    private boolean closed = false;
+    private JPanel runeSelectionPanel;
+    private JComboBox<Runes> runeSelectorCB;
+    private JLabel runeSelectorLabel;
 
-    private Color defaultForeground = new Color(-10306630);
-    private Color defaultBackground = new Color(-13553359);
+    private JPanel muleTopPanel;
+    private JCheckBox isMulingCB;
+    private JCheckBox isMuleCB;
+
+    private JPanel muleNamesPanel;
+    private JPanel addMuleNamePanel;
+    private JLabel enterMuleNameLabel;
+    private JTextField muleNameTF;
+    private JButton submitMuleNameButton;
+    private JList<String> muleNamesList;
+    private JButton removeButton;
+
+    private JPanel runecrafterNamePanel;
+    private JLabel runecrafterNameLabel;
+    private JTextField runecrafterNameTF;
+    private JButton setRCName;
 
     public GUI() {
-        initializeMainDialog();
-        initializeMainPanel();
-        initializeStartCancelPanel();
-        initializeInfoSelectorPanel();
-        initializeButtons();
-        initializeRuneCBLabel();
-        initializeRuneCB();
+        initializeSelf();
+
+        initializeMainPanels();
+
+        initializeMenuBar();
+
+        addComponentsToBaseSettings();
+
+        addComponentsToMuleSettings();
+
+        addComponentsToButtonsPanel();
     }
 
-    public static void main(String[] args) {
-        GUI gui = new GUI();
-        gui.show();
-    }
+    private void addComponentsToMuleSettings() {
+        muleTopPanel = new JPanel();
+        setDefaultColors(muleTopPanel);
+        muleSettingsPanel.add(muleTopPanel, BorderLayout.NORTH);
 
-    public void show() {
-        mainDialog.setVisible(true);
-    }
+        isMulingCB = new JCheckBox("Enable Muling");
+        setDefaultColors(isMulingCB);
+        muleTopPanel.add(isMulingCB);
+        isMulingCB.addActionListener(e -> {
+            if (isMulingCB.isSelected()) {
+                isMuleCB.setEnabled(true);
+                GlobalVariables.savedData.setMuling(true);
+                setCanModifyMules(true);
+            } else {
+                isMuleCB.setEnabled(false);
+                isMuleCB.setSelected(false);
+                GlobalVariables.savedData.setIsMule(false);
+                GlobalVariables.savedData.setMuling(false);
+                setCanModifyCraftersName(false);
+                setCanModifyMules(false);
+            }
+        });
 
-    public void close() {
-        mainDialog.setVisible(false);
-        mainDialog.dispose();
-    }
+        isMuleCB = new JCheckBox("Is Mule");
+        setDefaultColors(isMuleCB);
+        muleTopPanel.add(isMuleCB);
+        isMuleCB.setEnabled(false);
+        isMuleCB.addActionListener(e -> {
+            if (isMuleCB.isSelected()) {
+                GlobalVariables.savedData.setIsMule(true);
+                setCanModifyMules(false);
+                setCanModifyCraftersName(true);
+            } else {
+                GlobalVariables.savedData.setIsMule(false);
+                setCanModifyMules(true);
+                setCanModifyCraftersName(false);
+            }
+        });
 
-    private void openMuleSettingsGUI() {
-        MuleSettingsGUI muleSettingsGUI = new MuleSettingsGUI();
-        muleSettingsGUI.show();
-    }
+        muleNamesPanel = new JPanel(new BorderLayout());
+        setDefaultColors(muleNamesPanel);
+        muleSettingsPanel.add(muleNamesPanel, BorderLayout.CENTER);
 
-    public boolean exited() {
-        return !mainDialog.isVisible() && !closed;
-    }
+        addMuleNamePanel = new JPanel();
+        setDefaultColors(addMuleNamePanel);
+        muleNamesPanel.add(addMuleNamePanel, BorderLayout.NORTH);
 
-    private void start() {
-        GlobalVariables.rune = (Runes) runeCB.getSelectedItem();
-        if (GlobalVariables.rune != null) {
-            GlobalVariables.talisman = GlobalVariables.rune.getTalisman();
-            GlobalVariables.tiara = GlobalVariables.rune.getTiara();
-        }
-        mainDialog.setVisible(false);
-        mainDialog.dispose();
-        closed = true;
-    }
+        enterMuleNameLabel = new JLabel("Enter the name of a mule: ");
+        setDefaultColors(enterMuleNameLabel);
+        addMuleNamePanel.add(enterMuleNameLabel);
 
-    private void initializeMainDialog() {
-        mainDialog = new JDialog();
-        mainDialog.setModal(true);
-        mainDialog.setLocationRelativeTo(null);
-        mainDialog.setModalityType(Dialog.ModalityType.APPLICATION_MODAL);
-        mainDialog.setMinimumSize(new Dimension(500, 300));
-    }
+        muleNameTF = new JTextField(20);
+        setDefaultColors(muleNameTF);
+        addMuleNamePanel.add(muleNameTF);
 
-    private void initializeMainPanel() {
-        mainPanel = new JPanel();
-        mainPanel.setLayout(new BorderLayout(0, 0));
-        mainPanel.setBackground(defaultBackground);
-        mainPanel.setForeground(defaultForeground);
-        mainPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Elemental Binder", TitledBorder.CENTER, TitledBorder.BELOW_TOP, setFont(null, Font.BOLD, 20, mainPanel.getFont()), new Color(-10306630)));
-        mainDialog.add(mainPanel);
-    }
-
-    private void initializeStartCancelPanel() {
-        startCancelPanel = new JPanel();
-        startCancelPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
-        startCancelPanel.setBackground(defaultBackground);
-        startCancelPanel.setForeground(defaultForeground);
-        mainPanel.add(startCancelPanel, BorderLayout.SOUTH);
-        startCancelPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), null, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, setFont(null, -1, -1, startCancelPanel.getFont())));
-    }
-
-    private void initializeInfoSelectorPanel() {
-        infoSelectorPanel = new JPanel();
-        infoSelectorPanel.setLayout(new GridBagLayout());
-        infoSelectorPanel.setBackground(defaultBackground);
-        infoSelectorPanel.setForeground(defaultForeground);
-        mainPanel.add(infoSelectorPanel, BorderLayout.CENTER);
-        infoSelectorPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), null));
-    }
-
-    private void initializeRuneCB() {
-        runeCB = new JComboBox<>(Runes.values());
-        runeCB.setBackground(defaultBackground);
-        runeCB.setForeground(defaultForeground);
-        GridBagConstraints gbc;
-        gbc = new GridBagConstraints();
-        gbc.gridx = 1;
-        gbc.gridy = 0;
-        gbc.anchor = GridBagConstraints.WEST;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.insets = new Insets(10, 10, 10, 10);
-        infoSelectorPanel.add(runeCB, gbc);
-    }
-
-    private void initializeRuneCBLabel() {
-        selectRuneLabel = new JLabel();
-        selectRuneLabel.setBackground(defaultBackground);
-        selectRuneLabel.setForeground(defaultForeground);
-        selectRuneLabel.setText("Select a type of rune:");
-        GridBagConstraints gbc;
-        gbc = new GridBagConstraints();
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.anchor = GridBagConstraints.WEST;
-        gbc.insets = new Insets(10, 10, 10, 10);
-        infoSelectorPanel.add(selectRuneLabel, gbc);
-    }
-
-    private void initializeButtons() {
-        muleSettings = new JButton();
-        muleSettings.setBackground(defaultBackground);
-        muleSettings.setForeground(defaultForeground);
-        muleSettings.setHorizontalAlignment(0);
-        muleSettings.setHorizontalTextPosition(0);
-        muleSettings.setText("Mule Settings");
-        muleSettings.setVerticalAlignment(0);
-        muleSettings.setVerticalTextPosition(0);
-        startCancelPanel.add(muleSettings);
-        cancelButton = new JButton();
-        cancelButton.setBackground(defaultBackground);
-        cancelButton.setForeground(defaultForeground);
-        cancelButton.setHorizontalAlignment(0);
-        cancelButton.setHorizontalTextPosition(0);
-        cancelButton.setText("Cancel");
-        cancelButton.setVerticalAlignment(0);
-        cancelButton.setVerticalTextPosition(0);
-        startCancelPanel.add(cancelButton);
-        startButton = new JButton();
-        startButton.setBackground(defaultBackground);
-        startButton.setForeground(defaultForeground);
-        startButton.setHorizontalAlignment(0);
-        startButton.setHorizontalTextPosition(0);
-        startButton.setText("Start");
-        startButton.setVerticalAlignment(0);
-        startButton.setVerticalTextPosition(0);
-        startCancelPanel.add(startButton);
-
-        cancelButton.addActionListener(e -> close());
-        startButton.addActionListener(e -> start());
-        muleSettings.addActionListener(e -> openMuleSettingsGUI());
-
-        muleSettings.addMouseListener(new MouseAdapter() {
+        submitMuleNameButton = new JButton("Add");
+        setDefaultColors(submitMuleNameButton);
+        addMuleNamePanel.add(submitMuleNameButton);
+        submitMuleNameButton.addActionListener(e -> onAdd());
+        submitMuleNameButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
-                muleSettings.setForeground(Color.ORANGE);
+                if (submitMuleNameButton.isEnabled())
+                    submitMuleNameButton.setForeground(Color.orange);
             }
 
             @Override
             public void mouseExited(MouseEvent e) {
-                muleSettings.setForeground(defaultForeground);
+                if (submitMuleNameButton.isEnabled())
+                    submitMuleNameButton.setForeground(Color.cyan);
+            }
+        });
+
+        muleNamesList = new JList<>();
+        muleNamesList.setFixedCellWidth(100);
+        muleNamesList.setFixedCellHeight(30);
+        muleNamesList.setVisibleRowCount(5);
+        setDefaultColors(muleNamesList);
+        JScrollPane scrollPane = new JScrollPane(muleNamesList);
+        setDefaultColors(scrollPane);
+        muleNamesPanel.add(scrollPane, BorderLayout.CENTER);
+        muleNamesList.addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                if (!removeButton.isEnabled())
+                    removeButton.setEnabled(true);
+            }
+        });
+
+        removeButton = new JButton("Remove");
+        setDefaultColors(removeButton);
+        muleNamesPanel.add(removeButton, BorderLayout.SOUTH);
+        removeButton.addActionListener(e -> onRemove());
+        removeButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                if (removeButton.isEnabled())
+                    removeButton.setForeground(Color.orange);
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                if (removeButton.isEnabled())
+                    removeButton.setForeground(Color.cyan);
+            }
+        });
+        removeButton.setEnabled(false);
+
+        runecrafterNamePanel = new JPanel();
+        setDefaultColors(runecrafterNamePanel);
+        muleSettingsPanel.add(runecrafterNamePanel, BorderLayout.SOUTH);
+
+        runecrafterNameLabel = new JLabel("Enter Runecrafter's name: ");
+        setDefaultColors(runecrafterNameLabel);
+        runecrafterNamePanel.add(runecrafterNameLabel);
+
+        runecrafterNameTF = new JTextField(20);
+        setDefaultColors(runecrafterNameTF);
+        runecrafterNamePanel.add(runecrafterNameTF);
+
+        setRCName = new JButton("Set");
+        setDefaultColors(setRCName);
+        runecrafterNamePanel.add(setRCName);
+        setRCName.addActionListener(e -> onSetName());
+        setRCName.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                if (setRCName.isEnabled())
+                    setRCName.setForeground(Color.orange);
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                if (setRCName.isEnabled())
+                    setRCName.setForeground(Color.cyan);
+            }
+        });
+
+        setCanModifyMules(false);
+
+        setCanModifyCraftersName(false);
+
+    }
+
+    private void onSetName() {
+        String rcName = runecrafterNameTF.getText();
+        if (!StringUtilities.isStringEmpty(rcName)) {
+            GlobalVariables.savedData.setRunecrafterName(rcName);
+        }
+    }
+
+    private void onAdd() {
+        String muleName = muleNameTF.getText();
+        if (!StringUtilities.isStringEmpty(muleName)) {
+            GlobalVariables.savedData.muleNames().add(muleName);
+            String[] temp = ArrayUtilities.getArrayFromHashSet(GlobalVariables.savedData.muleNames());
+            muleNamesList.setListData(temp);
+            muleNameTF.setText(null);
+            removeButton.setEnabled(false);
+        }
+    }
+
+    private void onRemove() {
+        String muleName = muleNamesList.getSelectedValue();
+        GlobalVariables.savedData.muleNames().remove(muleName);
+        muleNamesList.setListData(ArrayUtilities.getArrayFromHashSet(GlobalVariables.savedData.muleNames()));
+        removeButton.setEnabled(false);
+    }
+
+    private void setCanModifyCraftersName(boolean canModifyCraftersName) {
+        setRCName.setEnabled(canModifyCraftersName);
+        runecrafterNameTF.setEnabled(canModifyCraftersName);
+        runecrafterNameLabel.setEnabled(canModifyCraftersName);
+    }
+
+    private void setCanModifyMules(boolean canModifyMules) {
+        enterMuleNameLabel.setEnabled(canModifyMules);
+        muleNameTF.setEnabled(canModifyMules);
+        submitMuleNameButton.setEnabled(canModifyMules);
+        muleNamesList.setEnabled(canModifyMules);
+    }
+
+    private void addComponentsToButtonsPanel() {
+        cancelButton = new JButton("Cancel");
+        setDefaultColors(cancelButton);
+        cancelButton.addActionListener((e) -> onCancel());
+        buttonsPanel.add(cancelButton);
+
+        startButton = new JButton("Start");
+        setDefaultColors(startButton);
+        startButton.addActionListener((e) -> onStart());
+        buttonsPanel.add(startButton);
+
+        cancelButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                cancelButton.setForeground(Color.orange);
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                cancelButton.setForeground(Color.cyan);
             }
         });
 
         startButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
-                startButton.setForeground(Color.green);
+                startButton.setForeground(Color.orange);
             }
 
             @Override
             public void mouseExited(MouseEvent e) {
-                startButton.setForeground(defaultForeground);
-            }
-        });
-
-        cancelButton.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                cancelButton.setForeground(Color.red);
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-                cancelButton.setForeground(defaultForeground);
+                startButton.setForeground(Color.cyan);
             }
         });
     }
 
-    private Font setFont(String fontName, int style, int size, Font currentFont) {
-        if (currentFont == null) return null;
-        String resultName;
-        if (fontName == null) {
-            resultName = currentFont.getName();
-        } else {
-            Font testFont = new Font(fontName, Font.PLAIN, 10);
-            if (testFont.canDisplay('a') && testFont.canDisplay('1')) {
-                resultName = fontName;
-            } else {
-                resultName = currentFont.getName();
-            }
+    private void addComponentsToBaseSettings() {
+        runeSelectionPanel = new JPanel();
+        setDefaultColors(runeSelectionPanel);
+        baseSettingsPanel.add(runeSelectionPanel);
+
+        runeSelectorLabel = new JLabel("Select type of rune: ");
+        setDefaultColors(runeSelectorLabel);
+        runeSelectionPanel.add(runeSelectorLabel);
+
+        runeSelectorCB = new JComboBox<>(Runes.values());
+        setDefaultColors(runeSelectorCB);
+        runeSelectionPanel.add(runeSelectorCB);
+    }
+
+    private void initializeSelf() {
+        setDefaultColors(this);
+        setModal(true);
+        setModalityType(ModalityType.APPLICATION_MODAL);
+        setMinimumSize(new Dimension(400, 300));
+        setTitle("Elemental Binder: v" + VersionChecker.getCurrentVersion());
+    }
+
+    private void initializeMainPanels() {
+        mainPanel = new JPanel();
+        mainPanel.setBorder(BorderFactory.createLineBorder(Color.darkGray.brighter()));
+        mainPanel.setLayout(new BorderLayout());
+        setDefaultColors(mainPanel);
+        add(mainPanel);
+
+        southPanel = new JPanel();
+        setDefaultColors(southPanel);
+        southPanel.setBorder(BorderFactory.createLineBorder(Color.darkGray.brighter()));
+        southPanel.setLayout(new BorderLayout());
+        mainPanel.add(southPanel, BorderLayout.SOUTH);
+
+        buttonsPanel = new JPanel();
+        setDefaultColors(buttonsPanel);
+        southPanel.add(buttonsPanel, BorderLayout.EAST);
+
+        settingsPanel = new JPanel();
+        settingsPanel.setBorder(BorderFactory.createLineBorder(Color.darkGray.brighter()));
+        settingsPanel.setLayout(new CardLayout());
+        setDefaultColors(settingsPanel);
+        mainPanel.add(settingsPanel, BorderLayout.CENTER);
+
+        baseSettingsPanel = new JPanel();
+        setDefaultColors(baseSettingsPanel);
+        baseSettingsPanel.setBorder(BorderFactory.createLineBorder(Color.darkGray.brighter()));
+        baseSettingsPanel.setLayout(new BorderLayout());
+        settingsPanel.add(baseSettingsPanel, "BaseSettings");
+
+        muleSettingsPanel = new JPanel();
+        setDefaultColors(muleSettingsPanel);
+        muleSettingsPanel.setBorder(BorderFactory.createLineBorder(Color.darkGray.brighter()));
+        muleSettingsPanel.setLayout(new BorderLayout());
+        settingsPanel.add(muleSettingsPanel, "MuleSettings");
+
+    }
+
+    private void initializeMenuBar() {
+        menuBar = new JMenuBar();
+        setDefaultColors(menuBar);
+        setJMenuBar(menuBar);
+
+        // Save Load
+        saveLoadMenu = new JMenu("Save/Load");
+        setDefaultColors(saveLoadMenu);
+        menuBar.add(saveLoadMenu);
+
+        saveMuleItem = new JMenuItem("Save Mule");
+        setDefaultColors(saveMuleItem);
+        saveMuleItem.addActionListener(e -> onSave(false));
+        saveLoadMenu.add(saveMuleItem);
+
+
+        loadMuleItem = new JMenuItem("Load Mule");
+        setDefaultColors(loadMuleItem);
+        loadMuleItem.addActionListener(e -> onLoad(false));
+        saveLoadMenu.add(loadMuleItem);
+
+        saveCrafterItem = new JMenuItem("Save Crafter");
+        setDefaultColors(saveCrafterItem);
+        saveCrafterItem.addActionListener(e -> onSave(true));
+        saveLoadMenu.add(saveCrafterItem);
+
+        loadCrafterItem = new JMenuItem("Load Crafter");
+        setDefaultColors(loadCrafterItem);
+        loadCrafterItem.addActionListener(e -> onLoad(true));
+        saveLoadMenu.add(loadCrafterItem);
+        // End Save Load
+
+        // Settings
+        settingsMenu = new JMenu("Settings");
+        setDefaultColors(settingsMenu);
+        menuBar.add(settingsMenu);
+
+        baseSettings = new JMenuItem("Core");
+        setDefaultColors(baseSettings);
+        baseSettings.addActionListener(e -> {
+            CardLayout cardLayout = (CardLayout) settingsPanel.getLayout();
+            cardLayout.show(settingsPanel, "BaseSettings");
+        });
+        settingsMenu.add(baseSettings);
+
+        muleSettings = new JMenuItem("Mule");
+        setDefaultColors(muleSettings);
+        muleSettings.addActionListener(e -> {
+            CardLayout cardLayout = (CardLayout) settingsPanel.getLayout();
+            cardLayout.show(settingsPanel, "MuleSettings");
+        });
+        settingsMenu.add(muleSettings);
+        // End Settings
+    }
+
+    private void onLoad(boolean crafterSave) {
+        FileHandler.loadSavedData(crafterSave);
+        runeSelectorCB.setSelectedItem(GlobalVariables.savedData.selectedRune());
+        isMulingCB.setSelected(GlobalVariables.savedData.isMuling());
+        if (isMulingCB.isSelected())
+            setCanModifyMules(true);
+        isMuleCB.setSelected(GlobalVariables.savedData.isMule());
+        if (GlobalVariables.savedData.isMule()) {
+            isMuleCB.setEnabled(true);
+            setCanModifyMules(false);
+            runecrafterNameTF.setText(GlobalVariables.savedData.runecrafterName());
         }
-        return new Font(resultName, style >= 0 ? style : currentFont.getStyle(), size >= 0 ? size : currentFont.getSize());
+        muleNamesList.setListData(ArrayUtilities.getArrayFromHashSet(GlobalVariables.savedData.muleNames()));
+    }
+
+    private void onSave(boolean crafterSave) {
+        GlobalVariables.savedData.setSelectedRune((Runes) runeSelectorCB.getSelectedItem());
+        FileHandler.saveSavedData(crafterSave);
+    }
+
+    private void onStart() {
+        startClicked = true;
+        GlobalVariables.savedData.setSelectedRune((Runes) runeSelectorCB.getSelectedItem());
+        setVisible(false);
+    }
+
+    private void onCancel() {
+        setVisible(false);
+        dispose();
+    }
+
+    private void setDefaultColors(Component component) {
+        component.setBackground(Color.darkGray);
+        component.setForeground(Color.cyan);
+    }
+
+    public void start() {
+        pack();
+        setMinimumSize(getSize());
+        setLocationRelativeTo(GlobalVariables.script.getBot().getCanvas());
+        setVisible(true);
+    }
+
+    public boolean wasExited() {
+        return !isVisible() && !startClicked;
     }
 }

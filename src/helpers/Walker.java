@@ -19,7 +19,7 @@ public class Walker {
         closestBank = banks[0];
         for (int i = 1; i < banks.length; i++) {
             if (banks[i].getCentralPosition().distance(
-                    rune.getRuinsLocation().getCentralPosition()) < closestBank.getCentralPosition().distance(rune.getRuinsLocation().getCentralPosition())) {
+                    savedData.selectedRune().getRuinsLocation().getCentralPosition()) < closestBank.getCentralPosition().distance(savedData.selectedRune().getRuinsLocation().getCentralPosition())) {
                 closestBank = banks[i];
             }
         }
@@ -47,17 +47,17 @@ public class Walker {
 
     public static boolean webWalkToRuins() {
         status = "WebWalking to Ruins!";
-        return webWalkingEvent(rune.getRuinsLocation());
+        return webWalkingEvent(savedData.selectedRune().getRuinsLocation());
     }
 
     public static boolean walkToBank() {
         status = "Walking Path to Bank!";
-        return walkingEvent(rune.getWalkPaths(), true);
+        return walkingEvent(savedData.selectedRune().getWalkPaths(), true);
     }
 
     public static boolean walkToRuins() {
         status = "Walking Path to Ruins!";
-        return walkingEvent(rune.getWalkPaths(), false);
+        return walkingEvent(savedData.selectedRune().getWalkPaths(), false);
     }
 
     private static boolean webWalkingEvent(Area area) {
@@ -84,6 +84,6 @@ public class Walker {
                 break;
             }
         }
-        return rune.getRuinsLocation().contains(script.myPlayer());
+        return savedData.selectedRune().getRuinsLocation().contains(script.myPlayer());
     }
 }

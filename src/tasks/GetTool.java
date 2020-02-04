@@ -14,14 +14,14 @@ public class GetTool {
                 if (!inventoryHasItems()) {
                     if (!playerHasEquipment()) {
                         if (bankContainsTiara()) {
-                            if (getTool(tiara.getName())) {
+                            if (getTool(savedData.tiara().getName())) {
                                 if (equipTiara()) {
                                     script.log("Equipped Tiara!");
                                     new GetEssence();
                                 }
                             }
                         } else if (bankContainsTalisman()) {
-                            if (getTool(talisman.getName())) {
+                            if (getTool(savedData.talisman().getName())) {
                                 script.log("Got Talisman!");
                                 new GetEssence();
                             }
@@ -61,7 +61,7 @@ public class GetTool {
     }
 
     private boolean inventoryContainsTool() {
-        return script.getInventory().contains(tiara.getName()) || script.getInventory().contains(talisman.getName());
+        return script.getInventory().contains(savedData.tiara().getName()) || script.getInventory().contains(savedData.talisman().getName());
     }
 
     private boolean depositItems() {
@@ -79,12 +79,12 @@ public class GetTool {
     private boolean equipTiara() {
         if (script.getBank().isOpen()) {
             if (script.getBank().close()) {
-                if (script.getInventory().contains(tiara.getName())) {
-                    if (script.getInventory().interact("Wear", tiara.getName())) {
+                if (script.getInventory().contains(savedData.tiara().getName())) {
+                    if (script.getInventory().interact("Wear", savedData.tiara().getName())) {
                         new ConditionalSleep(10000, 100) {
                             @Override
                             public boolean condition() throws InterruptedException {
-                                return !script.getInventory().contains(tiara.getName());
+                                return !script.getInventory().contains(savedData.tiara().getName());
                             }
                         }.sleep();
                         return true;
@@ -92,12 +92,12 @@ public class GetTool {
                 }
             }
         } else {
-            if (script.getInventory().contains(tiara.getName())) {
-                if (script.getInventory().interact("Wear", tiara.getName())) {
+            if (script.getInventory().contains(savedData.tiara().getName())) {
+                if (script.getInventory().interact("Wear", savedData.tiara().getName())) {
                     new ConditionalSleep(10000, 100) {
                         @Override
                         public boolean condition() throws InterruptedException {
-                            return !script.getInventory().contains(tiara.getName());
+                            return !script.getInventory().contains(savedData.tiara().getName());
                         }
                     }.sleep();
                     return true;
@@ -121,11 +121,11 @@ public class GetTool {
     }
 
     private boolean bankContainsTiara() {
-        return script.getBank().getItem(tiara.getName()) != null;
+        return script.getBank().getItem(savedData.tiara().getName()) != null;
     }
 
     private boolean bankContainsTalisman() {
-        return script.getBank().getItem(talisman.getName()) != null;
+        return script.getBank().getItem(savedData.talisman().getName()) != null;
     }
 
     private boolean bankIsOpen() {

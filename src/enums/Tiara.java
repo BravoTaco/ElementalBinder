@@ -17,4 +17,23 @@ public enum Tiara {
     public String getName() {
         return name;
     }
+
+    public Tiara getTiaraBasedOnRune(Runes rune) {
+        switch (rune) {
+            case AIR:
+                return Tiara.AIR;
+            case MIND:
+                return Tiara.MIND;
+            case WATER:
+                return Tiara.WATER;
+            case EARTH:
+                return Tiara.EARTH;
+            case FIRE:
+                return Tiara.FIRE;
+            case BODY:
+                return Tiara.BODY;
+            default:
+                return null;
+        }
+    }
 }

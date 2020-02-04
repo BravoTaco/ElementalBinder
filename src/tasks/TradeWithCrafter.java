@@ -12,7 +12,7 @@ public class TradeWithCrafter {
     private Item essence = script.getInventory().getItem(item -> item.getName().equals("Rune essence") || item.getName().equals("Pure essence"));
 
     public TradeWithCrafter() throws InterruptedException {
-        if (crafterExists() && rune.getRuinsLocation().contains(script.myPlayer())) {
+        if (savedData.isMule() && crafterExists() && savedData.selectedRune().getRuinsLocation().contains(script.myPlayer())) {
             status = "Trading with crafter!";
             if (Trader.trade(crafter)) {
                 if (Trader.offerAll(essence)) {
@@ -27,14 +27,14 @@ public class TradeWithCrafter {
             if (waitForCrafter()) {
                 new TradeWithCrafter();
             }
-        } else if (!rune.getRuinsLocation().contains(script.myPlayer())) {
+        } else if (!savedData.selectedRune().getRuinsLocation().contains(script.myPlayer())) {
             new WalkToRuins();
         }
     }
 
     private boolean waitForCrafter() {
         status = "Waiting for crafter!";
-        script.log(runecrafterName);
+        script.log(savedData.runecrafterName());
         new ConditionalSleep(60000, 3000) {
             @Override
             public boolean condition() throws InterruptedException {
@@ -52,7 +52,7 @@ public class TradeWithCrafter {
     private boolean crafterExists() {
         for (Player player : script.getPlayers().getAll()) {
             if (player != null) {
-                if (player.getName().equals(runecrafterName)) {
+                if (player.getName().equals(savedData.runecrafterName())) {
                     crafter = player;
                     return true;
                 }

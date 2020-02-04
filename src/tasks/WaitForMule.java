@@ -26,16 +26,13 @@ public class WaitForMule {
                 return muleIsNearby();
             }
         }.sleep();
-        if (muleIsNearby()) {
-            return true;
-        }
-        return false;
+        return muleIsNearby();
     }
 
     private boolean muleIsNearby() {
         for (Player player : script.getPlayers().getAll()) {
             if (player != null) {
-                if (muleNames.contains(player.getName()) && rune.getRuinsLocation().contains(player)) {
+                if (savedData.muleNames().contains(player.getName()) && savedData.selectedRune().getRuinsLocation().contains(player)) {
                     mule = player;
                     return true;
                 }

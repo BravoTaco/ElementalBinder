@@ -17,4 +17,23 @@ public enum Talisman {
     public String getName() {
         return name;
     }
+
+    public Talisman getTalismanBasedOnRune(Runes rune) {
+        switch (rune) {
+            case AIR:
+                return Talisman.AIR;
+            case MIND:
+                return Talisman.MIND;
+            case WATER:
+                return Talisman.WATER;
+            case EARTH:
+                return Talisman.EARTH;
+            case FIRE:
+                return Talisman.FIRE;
+            case BODY:
+                return Talisman.BODY;
+            default:
+                return null;
+        }
+    }
 }

@@ -34,24 +34,24 @@ public class UseAltar {
     }
 
     private boolean portalExists() {
-        return (portal = script.getObjects().closest("Portal")) != null && portal.getConfig() == rune.getPortal().getConfig();
+        return (portal = script.getObjects().closest("Portal")) != null && portal.getConfig() == savedData.selectedRune().getPortal().getConfig();
     }
 
     private boolean addRunesCrafted() {
-        if (script.getInventory().contains(rune.getName())) {
-            amountOfRunesMade += (script.getInventory().getAmount(rune.getName()) - runesInv);
+        if (script.getInventory().contains(savedData.selectedRune().getName())) {
+            amountOfRunesMade += (script.getInventory().getAmount(savedData.selectedRune().getName()) - runesInv);
             return true;
         }
         return false;
     }
 
     private boolean altarExists() {
-        return ((altar = script.getObjects().closest("Altar")) != null) && altar.getConfig() == rune.getAltar().getConfig();
+        return ((altar = script.getObjects().closest("Altar")) != null) && altar.getConfig() == savedData.selectedRune().getAltar().getConfig();
     }
 
     private boolean craftRunes() {
         if (altar.interact("Craft-rune")) {
-            runesInv = script.getInventory().getAmount(rune.getName());
+            runesInv = script.getInventory().getAmount(savedData.selectedRune().getName());
             new ConditionalSleep(15000, 100) {
                 @Override
                 public boolean condition() throws InterruptedException {
