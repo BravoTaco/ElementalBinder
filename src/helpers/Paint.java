@@ -98,7 +98,8 @@ public class Paint {
             // Essences Traded
             drawBox(g, x + (width / 2) + 90, y + 85, 110, 20, Color.BLACK);
             g.setColor(Color.RED);
-            g.drawString("Essence's Traded:", x + (width / 2) + 95, y + 100);
+            g.drawString("Essence's", x + (width / 2) + 95, y + 95);
+            g.drawString(" Traded:", x + (width / 2) + 95, y + 105);
             g.setColor(Color.ORANGE);
             g.drawString(formatValue(amountOfEssencesTraded), x + (width / 2) + 173, y + 100);
         }

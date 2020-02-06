@@ -13,7 +13,7 @@ public class TradeWithCrafter {
     private Item essence = script.getInventory().getItem(item -> item.getName().equals("Rune essence") || item.getName().equals("Pure essence"));
 
     public TradeWithCrafter() throws InterruptedException {
-        if (savedData.isMule() && (crafter = PlayerUtilities.getPlayerFromNames(savedData.muleNames())) != null && savedData.selectedRune().getRuinsLocation().contains(script.myPlayer())) {
+        if (savedData.isMule() && (crafter = PlayerUtilities.getPlayerFromName(savedData.runecrafterName())) != null && savedData.selectedRune().getRuinsLocation().contains(script.myPlayer())) {
             status = "Trading with crafter!";
             if (Trader.trade(crafter)) {
                 if (Trader.offerAll(essence)) {
@@ -25,7 +25,7 @@ public class TradeWithCrafter {
                     }
                 }
             }
-        } else if (PlayerUtilities.getPlayerFromNames(savedData.muleNames()) == null) {
+        } else if (PlayerUtilities.getPlayerFromName(savedData.runecrafterName()) == null) {
             if (waitForCrafter()) {
                 new TradeWithCrafter();
             }
@@ -36,14 +36,13 @@ public class TradeWithCrafter {
 
     private boolean waitForCrafter() {
         status = "Waiting for crafter!";
-        script.log(savedData.runecrafterName());
         new ConditionalSleep(10000, 1500) {
             @Override
             public boolean condition() throws InterruptedException {
-                return PlayerUtilities.getPlayerFromNames(savedData.muleNames()) != null;
+                return PlayerUtilities.getPlayerFromName(savedData.runecrafterName()) != null;
             }
         }.sleep();
-        return PlayerUtilities.getPlayerFromNames(savedData.muleNames()) != null;
+        return PlayerUtilities.getPlayerFromName(savedData.runecrafterName()) != null;
     }
 
     private boolean doesNotHaveEssence() {
