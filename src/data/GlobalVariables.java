@@ -13,6 +13,7 @@ public abstract class GlobalVariables {
     public static SavedData savedData = new SavedData();
 
     public static long amountOfRunesMade = 0;
+    public static long amountOfEssencesTraded = 0;
 
     public static Area[] banks = {
             Banks.LUMBRIDGE_UPPER,
