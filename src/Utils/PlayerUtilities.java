@@ -13,7 +13,7 @@ public final class PlayerUtilities {
     public static Player getPlayerFromNames(HashSet<String> playerNames) {
         for (Player player : script.getPlayers().getAll()) {
             for (String s : playerNames) {
-                if (StringUtilities.stringMatchesBasedOnChars(s, player.getName())) {
+                if (StringUtilities.stringMatchesWithRemovedWhiteSpace(s, player.getName())) {
                     return player;
                 }
             }
@@ -23,7 +23,7 @@ public final class PlayerUtilities {
 
     public static Player getPlayerFromName(String playerName) {
         for (Player player : script.getPlayers().getAll()) {
-            if (StringUtilities.stringMatchesBasedOnChars(playerName, player.getName())) {
+            if (StringUtilities.stringMatchesWithRemovedWhiteSpace(playerName, player.getName())) {
                 return player;
             }
         }

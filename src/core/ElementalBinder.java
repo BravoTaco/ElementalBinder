@@ -230,7 +230,7 @@ public class ElementalBinder extends Script {
     private boolean muleIsNearby() {
         for (Player player : script.getPlayers().getAll()) {
             for (String s : savedData.muleNames()) {
-                if (StringUtilities.stringMatchesBasedOnChars(s, player.getName()))
+                if (StringUtilities.stringMatchesWithRemovedWhiteSpace(s, player.getName()))
                     return true;
             }
         }
