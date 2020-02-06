@@ -123,7 +123,7 @@ public class ElementalBinder extends Script {
         long xpTillLevel = getSkills().getExperienceForLevel(getSkills().getStatic(Skill.RUNECRAFTING) + 1) - getSkills().getExperience(Skill.RUNECRAFTING);
 
         if (started) {
-            paint.drawData(g, 5, 340, runTime, timeTillLevel, xpPerHour, amountOfRunesMade, gainedXp, xpTillLevel);
+            paint.drawData(g, 5, 340, runTime, timeTillLevel, xpPerHour, amountOfRunesMade, amountOfEssencesTraded, gainedXp, xpTillLevel);
         }
 
     }
@@ -138,7 +138,7 @@ public class ElementalBinder extends Script {
     }
 
     private boolean runChecks() {
-        if (VersionChecker.needsUpdated("BravoTaco", "ElementalBinder", getVersion())) {
+        if (VersionChecker.needsUpdated("BravoTaco", "ElementalBinder", getVersion(), bot.getCanvas())) {
             log("Newer Version Available on GitHub. Link: https://github.com/BravoTaco/Elemental-Binder/releases");
             JOptionPane.showMessageDialog(getBot().getCanvas(), "Newer version is available on GitHub! \n https://github.com/BravoTaco/Elemental-Binder/releases");
         } else {

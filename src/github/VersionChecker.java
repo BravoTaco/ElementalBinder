@@ -1,6 +1,9 @@
 package github;
 
+import org.osbot.rs07.canvas.WrappedCanvas;
+
 import javax.net.ssl.HttpsURLConnection;
+import javax.swing.*;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -18,14 +21,14 @@ public class VersionChecker {
 
     private static InfoCache infoCache;
 
-    public static boolean needsUpdated(String gitHubUserName, String gitHubProjectName, double thisScriptVersion) {
+    public static boolean needsUpdated(String gitHubUserName, String gitHubProjectName, double thisScriptVersion, WrappedCanvas botCanvas) {
         if (!hasRunInitialCheck) {
             infoCache = new InfoCache(gitHubUserName, gitHubProjectName, thisScriptVersion);
             getVersions(infoCache);
         }
         System.out.println("GitHub Version: [" + gitHubVersion + "] :: " + "Script Version: [" + currentVersion + "]");
         if (gitHubVersion < currentVersion)
-            System.out.println("Currently using experimental build!");
+            JOptionPane.showMessageDialog(botCanvas, "Using dev build, you may experience bugs and crashes.", "DevBuild Warning", JOptionPane.WARNING_MESSAGE);
         return gitHubVersion > currentVersion;
     }
 

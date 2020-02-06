@@ -37,7 +37,7 @@ public class Paint {
         g.draw(rd);
     }
 
-    public void drawData(Graphics2D g, int x, int y, long runTime, long timeToLevel, long xpPerHour, long amountOfFishCaught, int gainedXp, long xpTillLevel) {
+    public void drawData(Graphics2D g, int x, int y, long runTime, long timeToLevel, long xpPerHour, long amountOfRunesCrafted, long amountOfEssencesTraded, int gainedXp, long xpTillLevel) {
         float alphaAmount = 0.95f;
         int width = 510;
         int height = 137;
@@ -87,12 +87,21 @@ public class Paint {
         g.setColor(Color.ORANGE);
         g.drawString(formatValue(xpPerHour), x + (width / 3) + 75, y + 100);
 
-        //Fires Made
-        drawBox(g, x + (width / 2) + 90, y + 85, 110, 20, Color.BLACK);
-        g.setColor(Color.RED);
-        g.drawString("Runes Made:", x + (width / 2) + 95, y + 100);
-        g.setColor(Color.ORANGE);
-        g.drawString(formatValue(amountOfFishCaught), x + (width / 2) + 173, y + 100);
+        if (!GlobalVariables.savedData.isMule()) {
+            // Runes Made
+            drawBox(g, x + (width / 2) + 90, y + 85, 110, 20, Color.BLACK);
+            g.setColor(Color.RED);
+            g.drawString("Runes Made:", x + (width / 2) + 95, y + 100);
+            g.setColor(Color.ORANGE);
+            g.drawString(formatValue(amountOfRunesCrafted), x + (width / 2) + 173, y + 100);
+        } else {
+            // Essences Traded
+            drawBox(g, x + (width / 2) + 90, y + 85, 110, 20, Color.BLACK);
+            g.setColor(Color.RED);
+            g.drawString("Essence's Traded:", x + (width / 2) + 95, y + 100);
+            g.setColor(Color.ORANGE);
+            g.drawString(formatValue(amountOfEssencesTraded), x + (width / 2) + 173, y + 100);
+        }
 
         //Gained Xp
         drawBox(g, x + (width / 2) + 90, y + 115, 110, 20, Color.BLACK);

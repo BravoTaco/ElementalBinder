@@ -18,6 +18,7 @@ public class TradeWithCrafter {
             if (Trader.trade(crafter)) {
                 if (Trader.offerAll(essence)) {
                     if (Trader.acceptTrade(true)) {
+                        amountOfEssencesTraded += 27;
                         if (doesNotHaveEssence()) {
                             new GetEssence();
                         }
