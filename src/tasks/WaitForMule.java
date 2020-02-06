@@ -9,7 +9,7 @@ import static data.GlobalVariables.status;
 public class WaitForMule {
 
     public WaitForMule() throws InterruptedException {
-        if (PlayerUtilities.getPlayerFromNames(savedData.muleNames()) != null) {
+        if (PlayerUtilities.getPlayerFromNames(savedData.muleNames()) == null) {
             if (waitForMule()) {
                 new TradeWithMule();
             }

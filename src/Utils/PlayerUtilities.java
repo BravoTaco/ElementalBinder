@@ -13,7 +13,7 @@ public final class PlayerUtilities {
     public static Player getPlayerFromNames(HashSet<String> playerNames) {
         for (Player player : script.getPlayers().getAll()) {
             for (String s : playerNames) {
-                if (StringUtilities.stringMatchesWithRemovedWhiteSpace(s, player.getName())) {
+                if (StringUtilities.stringMatchesWithRemovedWhiteSpace(s, player.getName()) && player.isVisible()) {
                     return player;
                 }
             }

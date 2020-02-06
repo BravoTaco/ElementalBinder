@@ -1,10 +1,12 @@
 package helpers;
 
+import Utils.PlayerUtilities;
 import org.osbot.rs07.api.map.Area;
 import org.osbot.rs07.api.map.Position;
 import org.osbot.rs07.event.Event;
 import org.osbot.rs07.event.WalkingEvent;
 import org.osbot.rs07.event.WebWalkEvent;
+import org.osbot.rs07.utility.Condition;
 
 import java.util.Collections;
 import java.util.LinkedList;
@@ -19,7 +21,8 @@ public class Walker {
         closestBank = banks[0];
         for (int i = 1; i < banks.length; i++) {
             if (banks[i].getCentralPosition().distance(
-                    savedData.selectedRune().getRuinsLocation().getCentralPosition()) < closestBank.getCentralPosition().distance(savedData.selectedRune().getRuinsLocation().getCentralPosition())) {
+                    savedData.selectedRune().getRuinsLocation().getCentralPosition())
+                    < closestBank.getCentralPosition().distance(savedData.selectedRune().getRuinsLocation().getCentralPosition())) {
                 closestBank = banks[i];
             }
         }
@@ -78,7 +81,16 @@ public class Walker {
         WalkingEvent walkingEvent = new WalkingEvent();
         walkingEvent.setPath(posList);
         walkingEvent.setEnergyThreshold(10);
-        for (Position position : walkPath) {
+        Condition stopCondition = new Condition() {
+            @Override
+            public boolean evaluate() {
+                return savedData.isMule() &&
+                        PlayerUtilities.getPlayerFromName(savedData.runecrafterName()) != null &&
+                        script.getInventory().contains(item -> item.getName().contains("essence"));
+            }
+        };
+        walkingEvent.setBreakCondition(stopCondition);
+        for (Position position : posList) {
             if (script.getMap().canReach(position)) {
                 script.execute(walkingEvent);
                 break;

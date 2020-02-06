@@ -13,13 +13,6 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-class Driver {
-    public static void main(String... args) {
-        GUI gui = new GUI();
-        gui.start();
-    }
-}
-
 public class GUI extends JDialog {
 
     private boolean startClicked;
