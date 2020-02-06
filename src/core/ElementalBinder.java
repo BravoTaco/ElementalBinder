@@ -23,7 +23,7 @@ import java.awt.*;
 
 import static data.GlobalVariables.*;
 
-@ScriptManifest(name = "Elemental Binder", author = "BravoTaco", version = 1.86, info = "Runecrafts F2P Runes.", logo = "https://i.imgur.com/svwoFav.png")
+@ScriptManifest(name = "Elemental Binder", author = "BravoTaco", version = 1.89, info = "Runecrafts F2P Runes.", logo = "https://i.imgur.com/svwoFav.png")
 public class ElementalBinder extends Script {
 
     private final Filter<Item> essenceFilter = item -> item.getName().equals("Rune essence") || item.getName().equals("Pure essence");
@@ -134,6 +134,8 @@ public class ElementalBinder extends Script {
         getExperienceTracker().start(Skill.RUNECRAFTING);
         startXp = getSkills().getExperience(Skill.RUNECRAFTING);
         paint = new Paint(this);
+        amountOfEssencesTraded = 0;
+        amountOfRunesMade = 0;
         started = true;
     }
 
@@ -144,6 +146,7 @@ public class ElementalBinder extends Script {
         } else {
             log("Script Up-To-Date!");
         }
+
         gui = new GUI();
         gui.start();
         if (gui.wasExited()) {
@@ -230,7 +233,7 @@ public class ElementalBinder extends Script {
     private boolean muleIsNearby() {
         for (Player player : script.getPlayers().getAll()) {
             for (String s : savedData.muleNames()) {
-                if (StringUtilities.stringMatchesBasedOnChars(s, player.getName()))
+                if (StringUtilities.stringMatchesWithRemovedWhiteSpace(s, player.getName()))
                     return true;
             }
         }

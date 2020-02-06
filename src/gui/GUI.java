@@ -1,7 +1,6 @@
 package gui;
 
 import Utils.ArrayUtilities;
-import Utils.StringUtilities;
 import data.GlobalVariables;
 import enums.Runes;
 import github.VersionChecker;
@@ -13,13 +12,6 @@ import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-
-class Driver {
-    public static void main(String... args) {
-        GUI gui = new GUI();
-        gui.start();
-    }
-}
 
 public class GUI extends JDialog {
 
@@ -227,14 +219,14 @@ public class GUI extends JDialog {
 
     private void onSetName() {
         String rcName = runecrafterNameTF.getText();
-        if (!StringUtilities.isStringEmpty(rcName)) {
+        if (!rcName.isEmpty()) {
             GlobalVariables.savedData.setRunecrafterName(rcName);
         }
     }
 
     private void onAdd() {
         String muleName = muleNameTF.getText();
-        if (!StringUtilities.isStringEmpty(muleName)) {
+        if (!muleName.isEmpty()) {
             GlobalVariables.savedData.muleNames().add(muleName);
             String[] temp = ArrayUtilities.getArrayFromHashSet(GlobalVariables.savedData.muleNames());
             muleNamesList.setListData(temp);

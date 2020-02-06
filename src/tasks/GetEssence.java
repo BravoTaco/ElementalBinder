@@ -9,6 +9,10 @@ public class GetEssence {
 
     public GetEssence() throws InterruptedException {
         status = "Getting Essence!";
+
+        if (script.getInventory().contains("Pure essence") || script.getInventory().contains("Rune essence"))
+            return;
+
         if (bankIsOpen()) {
             if (inventoryIsEmptyExceptTalisman()) {
                 if (bankContainsPureEssence()) {
