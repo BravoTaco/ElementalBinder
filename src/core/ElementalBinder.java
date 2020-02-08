@@ -23,7 +23,7 @@ import java.awt.*;
 
 import static data.GlobalVariables.*;
 
-@ScriptManifest(name = "Elemental Binder", author = "BravoTaco", version = 1.89, info = "Runecrafts F2P Runes.", logo = "https://i.imgur.com/svwoFav.png")
+@ScriptManifest(name = "Elemental Binder", author = "BravoTaco", version = 1.895, info = "Runecrafts F2P Runes.", logo = "https://i.imgur.com/svwoFav.png")
 public class ElementalBinder extends Script {
 
     private final Filter<Item> essenceFilter = item -> item.getName().equals("Rune essence") || item.getName().equals("Pure essence");
@@ -63,7 +63,6 @@ public class ElementalBinder extends Script {
     public int onLoop() throws InterruptedException {
         state = setState();
         if (state != null && !savedData.isMule()) {
-            log("Not Mule!");
             switch (state) {
                 case GETTOOL:
                     new GetTool();
@@ -130,6 +129,7 @@ public class ElementalBinder extends Script {
 
     private void initializeVariables() {
         script = this;
+        script.exchangeContext(bot);
         rcLevel = getSkills().getStatic(Skill.RUNECRAFTING);
         getExperienceTracker().start(Skill.RUNECRAFTING);
         startXp = getSkills().getExperience(Skill.RUNECRAFTING);
@@ -173,6 +173,8 @@ public class ElementalBinder extends Script {
                 return State.GETESSENCE;
             } else if (hasEssence() && !portalExists() && !altarExists() && !mysteriousRuinsExists()) {
                 return State.WALKTORUINS;
+            } else if (!hasEssence() && !portalExists() && !altarExists() && !mysteriousRuinsExists() && savedData.isMuling()) {
+                return State.WALKTORUINS;
             } else if (mysteriousRuinsExists() && hasEssence() && !portalExists() && !altarExists()) {
                 return State.ENTERRUINS;
             } else if (altarExists() && hasEssence()) {
@@ -189,7 +191,7 @@ public class ElementalBinder extends Script {
                 return State.GETESSENCE;
             } else if (hasEssence() && !savedData.selectedRune().getRuinsLocation().contains(myPlayer())) {
                 return State.WALKTORUINS;
-            } else if (hasEssence() && savedData.selectedRune().getRuinsLocation().contains(myPlayer()) && runecrafterNearby()) {
+            } else if (hasEssence() && runecrafterNearby()) {
                 return State.TRADEWITHCRAFTER;
             } else if (hasEssence() && savedData.selectedRune().getRuinsLocation().contains(myPlayer()) && !runecrafterNearby()) {
                 status = "Waiting for crafter!";
