@@ -12,7 +12,8 @@ public class WalkToRuins {
                 script.log("Walked To Ruins!");
             } else {
                 script.log("Unable to local walk. Trying to WebWalk!");
-                Walker.webWalkToRuins();
+                if (!Walker.webWalkToRuins())
+                    status = "Unable to walk to ruins!";
             }
         } else if (script.getObjects().closest("Altar") != null && script.getObjects().closest("Altar").getConfig() != savedData.selectedRune().getAltar().getConfig()) {
             new EnterRuins();

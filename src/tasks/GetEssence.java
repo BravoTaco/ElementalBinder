@@ -1,6 +1,7 @@
 package tasks;
 
 import helpers.Walker;
+import org.osbot.rs07.api.model.Item;
 import org.osbot.rs07.utility.ConditionalSleep;
 
 import static data.GlobalVariables.*;
@@ -8,25 +9,32 @@ import static data.GlobalVariables.*;
 public class GetEssence {
 
     public GetEssence() throws InterruptedException {
-        status = "Getting Essence!";
-
         if (script.getInventory().contains("Pure essence") || script.getInventory().contains("Rune essence"))
             return;
+
+        Item[] items = script.getInventory().getItems();
+        for (Item item : items)
+            script.log(item.getName());
+
+        status = "Getting Essence!";
 
         if (bankIsOpen()) {
             if (inventoryIsEmptyExceptTalisman()) {
                 if (bankContainsPureEssence()) {
                     if (withdrawEssence("Pure essence")) {
                         script.log("Withdrawn: Pure essence");
+                        status = "Withdrawn: Pure essence";
                         script.getBank().close();
                     }
                 } else if (bankContainsRuneEssence()) {
                     if (withdrawEssence("Rune essence")) {
                         script.log("Withdrawn: Rune essence");
+                        status = "Withdrawn: Rune essence";
                         script.getBank().close();
                     }
                 } else {
                     script.log("No essence! Stopping Script!");
+                    status = "No Essences!";
                     script.stop(false);
                 }
             } else if (depositAllExceptTalisman()) {
@@ -44,6 +52,7 @@ public class GetEssence {
                     new GetEssence();
                 } else {
                     script.log("Unable to walk to bank!");
+                    status = "Unable to walk to bank!";
                 }
             }
         }
@@ -62,10 +71,12 @@ public class GetEssence {
     }
 
     private boolean openBank() throws InterruptedException {
+        status = "Opening Bank!";
         return script.getBank().open();
     }
 
     private boolean waitForBankToOpen() {
+        status = "Waiting for bank to open!";
         new ConditionalSleep(10000, 100) {
             @Override
             public boolean condition() throws InterruptedException {
